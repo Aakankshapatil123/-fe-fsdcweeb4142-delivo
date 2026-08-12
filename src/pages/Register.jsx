@@ -1,176 +1,165 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
-import { toast } from "react-toastify";
-import { registerUser } from "../services/authServices";
+import { useNavigate } from "react-router";
 
-const Register = () => {
-   const navigate = useNavigate();
+const Home = () => {
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
-   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-   });
-
-   const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e) => {
+  // ================= SEARCH =================
+  const handleSearch = (e) => {
     e.preventDefault();
 
-    if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
+    const searchText = search.trim();
+
+    if (!searchText) {
+      navigate("/restaurants");
       return;
     }
 
-    try {
-      setLoading(true);
-
-      const userData = {
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-      };
-
-      const response = await registerUser(userData);
-
-      toast.success(
-        response?.message || "Registration successful!"
+    navigate(
+      `/restaurants?search=${encodeURIComponent(searchText)}`
     );
-
-
-    navigate("/login")
-
-  }catch (error) {
-      console.log("REGISTER ERROR:", error);
-  console.log("REGISTER RESPONSE:", error.response?.data);
-      const errorMessage =
-        error.response?.data?.message ||
-        error.message ||
-        "Registration failed. Please try again.";
-
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-10">
+    <div className="min-h-screen bg-gray-50">
 
-      {/* Logo */}
-      <div className="flex justify-center">
-        <Link to="/" className="flex items-center">
-          <div className="flex h-12 w-28 items-center justify-center rounded-lg bg-orange-500">
-            <span className="text-2xl font-bold text-white">
-              Delivo
-            </span>
-          </div>
-        </Link>
-      </div>
+      {/* ================= HERO ================= */}
+      <section className="bg-orange-500 px-6 py-20 md:px-10 md:py-28">
 
-      {/* Register Card */}
-      <div className="mx-auto mt-8 w-full max-w-2xl rounded-xl bg-white p-6 shadow-md md:p-10">
+        <div className="mx-auto max-w-5xl text-center">
 
-        {/* Heading */}
-        <h1 className="text-center text-3xl font-bold text-gray-800">
-          Create an Account
-        </h1>
+          <h1 className="text-4xl font-bold leading-tight text-white md:text-6xl">
+            Delicious Food,
+            <br />
+            Delivered to You
+          </h1>
 
-        <p className="mt-2 text-center text-base text-gray-500">
-          Create your Delivo account to order your favorite food
-        </p>
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-orange-50 md:text-xl">
+            Discover the best restaurants and delicious food near you.
+          </p>
 
-        {/* Form */}
-        <form
-          onSubmit={handleSubmit}
-          className="mx-auto mt-8 w-full max-w-xl space-y-5"
-        >
-
-          {/* Name */}
-          <div className="w-full">
-            <label
-              htmlFor="name"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
-              Full Name
-            </label>
+          {/* ================= SEARCH ================= */}
+          <form
+            onSubmit={handleSearch}
+            className="mx-auto mt-8 flex max-w-3xl flex-col gap-3 sm:flex-row"
+          >
 
             <input
               type="text"
-              id="name"
-              name="name"
-              required
-              placeholder="Enter your name"
-              className="h-14 w-full rounded-lg border border-gray-300 px-5 text-base outline-none transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-              value={formData.name}
-              onChange={e => setFormData({ ...formData, name:e.target.value})}
+              placeholder="Search restaurant or cuisine..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 rounded-xl border-0 bg-white px-5 py-4 text-gray-800 shadow-lg outline-none focus:ring-4 focus:ring-orange-200"
             />
-          </div>
 
-          {/* Email */}
-          <div className="w-full">
-            <label
-              htmlFor="email"
-              className="mb-2 block text-sm font-medium text-gray-700"
+            <button
+              type="submit"
+              className="rounded-xl bg-blue-600 px-8 py-4 font-semibold text-white shadow-lg transition hover:bg-blue-700"
             >
-              Email
-            </label>
+              🔍 Search
+            </button>
 
-            <input
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your email"
-              className="h-14 w-full rounded-lg border border-gray-300 px-5 text-base outline-none transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-              value={formData.email}
-              onChange={e => setFormData({ ...formData, email:e.target.value})}
-            />
+          </form>
+
+        </div>
+
+      </section>
+
+      {/* ================= FEATURES ================= */}
+      <section className="px-6 py-16 md:px-10">
+
+        <div className="mx-auto max-w-7xl">
+
+          <h2 className="text-center text-3xl font-bold text-gray-900">
+            Why Choose Delivo?
+          </h2>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-3">
+
+            {/* Great Food */}
+            <div className="rounded-2xl bg-white p-8 text-center shadow-md transition hover:-translate-y-1 hover:shadow-xl">
+
+              <div className="text-5xl">
+                🍔
+              </div>
+
+              <h3 className="mt-5 text-xl font-bold text-gray-900">
+                Great Food
+              </h3>
+
+              <p className="mt-3 text-gray-600">
+                Explore delicious food from the best restaurants.
+              </p>
+
+            </div>
+
+            {/* Fast Delivery */}
+            <div className="rounded-2xl bg-white p-8 text-center shadow-md transition hover:-translate-y-1 hover:shadow-xl">
+
+              <div className="text-5xl">
+                🚀
+              </div>
+
+              <h3 className="mt-5 text-xl font-bold text-gray-900">
+                Fast Delivery
+              </h3>
+
+              <p className="mt-3 text-gray-600">
+                Get your favorite food delivered quickly to your doorstep.
+              </p>
+
+            </div>
+
+            {/* Secure Payment */}
+            <div className="rounded-2xl bg-white p-8 text-center shadow-md transition hover:-translate-y-1 hover:shadow-xl">
+
+              <div className="text-5xl">
+                💳
+              </div>
+
+              <h3 className="mt-5 text-xl font-bold text-gray-900">
+                Secure Payment
+              </h3>
+
+              <p className="mt-3 text-gray-600">
+                Enjoy safe and secure online payment options.
+              </p>
+
+            </div>
+
           </div>
 
-          {/* Password */}
-          <div className="w-full">
-            <label
-              htmlFor="password"
-              className="mb-2 block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
+        </div>
 
-            <input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Enter your password"
-              className="h-14 w-full rounded-lg border border-gray-300 px-5 text-base outline-none transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-              value={formData.password}
-              onChange={e => setFormData({ ...formData, password:e.target.value})}
-            />
-          </div>
+      </section>
 
-          {/* Register Button */}
+      {/* ================= CTA ================= */}
+      <section className="px-6 pb-16 md:px-10">
+
+        <div className="mx-auto max-w-5xl rounded-2xl bg-white p-10 text-center shadow-md">
+
+          <h2 className="text-3xl font-bold text-gray-900">
+            Hungry?
+          </h2>
+
+          <p className="mt-3 text-gray-600">
+            Find your favorite restaurant and order now.
+          </p>
+
           <button
-            type="submit"
-            className="h-14 w-full rounded-lg bg-orange-500 text-base font-semibold text-white transition hover:bg-orange-600"
+            onClick={() => navigate("/restaurants")}
+            className="mt-6 rounded-lg bg-orange-500 px-7 py-3 font-semibold text-white transition hover:bg-orange-600"
           >
-            Create Account
+            Explore Restaurants
           </button>
 
-        </form>
+        </div>
 
-        {/* Login Link */}
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Already have an account?{" "}
-          <Link
-            to="/login"
-            className="font-semibold text-orange-500 hover:text-orange-600"
-          >
-            Login
-          </Link>
-        </p>
+      </section>
 
-      </div>
     </div>
   );
 };
 
-export default Register;
+export default Home;

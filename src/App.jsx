@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import RestaurantDetails from "./pages/RestaurantDetails";
 import Restaurants from "./pages/Restaurants";
+import Cart from "./pages/Cart";
 import Navwrapper from "./wrappers/Navwrapper";
 import Login from "./pages/Login";
 import { Provider } from "react-redux";
@@ -13,6 +14,9 @@ import { store } from "./redux/store";
 import AdminDashboard from "./pages/AdminDashboard";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import ProtectedRoute from "./components/ProtectedRouter";
+import Checkout from "./pages/checkout";
+import Favorites from "./pages/Favorites";
+
 
 
 const router = createBrowserRouter([
@@ -52,19 +56,36 @@ const router = createBrowserRouter([
     },
 
     {
+      path: "restaurants",
+      element: <Restaurants />,
+    },
+
+    
+    {
+      path: "restaurants/:id",
+      element: <RestaurantDetails />,
+    },
+
+    {
+      path: "favorites",
+      element: <Favorites />,
+    },
+   
+    {
       path: "profile",
       element: <Profile />,
     },
 
     {
-      path: "restaurants",
-      element: <Restaurants />,
+      path: "cart",
+      element: <Cart/>,
     },
 
-    {
-      path: "restaurant/:id",
-      element: <RestaurantDetails />,
+     {
+      path: "checkout",
+      element: <Checkout />,
     },
+
   ]
  }
 ]);

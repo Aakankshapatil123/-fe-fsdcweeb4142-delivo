@@ -42,7 +42,7 @@ const Navbar = () => {
 
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <div className="flex h-11 w-24 items-center justify-center rounded-lg bg-blue-600">
+          <div className="flex h-11 w-24 items-center justify-center rounded-lg bg-orange-600">
             <span className="text-xl font-bold text-white md:text-2xl">
               Delivo
             </span>
@@ -66,6 +66,21 @@ const Navbar = () => {
             className="font-medium text-gray-700 transition hover:text-blue-600"
           >
             Restaurants
+          </Link>
+
+          {/* Favorites */}
+          <Link to="/favorites"
+           className="font-medium text-gray-700 transition hover:text-blue-600"
+          >
+            Favorites
+          </Link>
+
+          {/* Cart */}
+          <Link
+            to="/cart"
+            className="font-medium text-gray-700 transition hover:text-blue-600"
+            >
+            🛒 Cart
           </Link>
 
           {/* When user is NOT logged in */}
