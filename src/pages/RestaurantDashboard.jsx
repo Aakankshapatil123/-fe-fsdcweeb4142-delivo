@@ -3,6 +3,7 @@ import { Link } from "react-router";
 const RestaurantDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10 md:px-10">
+
       <div className="mx-auto max-w-7xl">
 
         {/* ================= HEADER ================= */}
@@ -19,7 +20,7 @@ const RestaurantDashboard = () => {
 
         <div className="mt-10 grid gap-6 md:grid-cols-3">
 
-          {/* Restaurant Owner / Profile */}
+          {/* ================= RESTAURANT PROFILE ================= */}
 
           <Link
             to="/restaurant/owner"
@@ -41,10 +42,10 @@ const RestaurantDashboard = () => {
             </div>
           </Link>
 
-          {/* Menu Management */}
+          {/* ================= MENU MANAGEMENT ================= */}
 
           <Link
-            to="/restaurant/dashboard"
+            to="/restaurant/menu"
             className="rounded-2xl bg-white p-6 shadow-md transition hover:-translate-y-1 hover:shadow-xl"
           >
             <div className="text-4xl">🍽️</div>
@@ -63,7 +64,7 @@ const RestaurantDashboard = () => {
             </div>
           </Link>
 
-          {/* Orders */}
+          {/* ================= ORDERS ================= */}
 
           <Link
             to="/restaurant/orders"
@@ -97,39 +98,90 @@ const RestaurantDashboard = () => {
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
+            {/* Pending */}
+
             <div className="rounded-xl bg-gray-100 p-5 text-center">
-              <div className="text-3xl">🕐</div>
+
+              <div className="text-3xl">
+                🕐
+              </div>
 
               <p className="mt-2 font-bold text-gray-800">
                 Pending
               </p>
+
             </div>
 
+            {/* Preparing */}
+
             <div className="rounded-xl bg-yellow-50 p-5 text-center">
-              <div className="text-3xl">👨‍🍳</div>
+
+              <div className="text-3xl">
+                👨‍🍳
+              </div>
 
               <p className="mt-2 font-bold text-yellow-700">
                 Preparing
               </p>
+
             </div>
 
+            {/* Out for Delivery */}
+
             <div className="rounded-xl bg-blue-50 p-5 text-center">
-              <div className="text-3xl">🛵</div>
+
+              <div className="text-3xl">
+                🛵
+              </div>
 
               <p className="mt-2 font-bold text-blue-700">
                 Out for Delivery
               </p>
+
             </div>
 
+            {/* Delivered */}
+
             <div className="rounded-xl bg-green-50 p-5 text-center">
-              <div className="text-3xl">✅</div>
+
+              <div className="text-3xl">
+                ✅
+              </div>
 
               <p className="mt-2 font-bold text-green-700">
                 Delivered
               </p>
+
             </div>
 
           </div>
+
+        </div>
+
+        {/* ================= QUICK ACTIONS ================= */}
+
+        <div className="mt-8 flex flex-wrap gap-4">
+
+          <Link
+            to="/restaurant/owner"
+            className="rounded-lg bg-orange-500 px-5 py-3 font-semibold text-white hover:bg-orange-600"
+          >
+            Manage Restaurant
+          </Link>
+
+          <Link
+            to="/restaurant/menu"
+            className="rounded-lg bg-green-500 px-5 py-3 font-semibold text-white hover:bg-green-600"
+          >
+            Manage Menu
+          </Link>
+
+          <Link
+            to="/restaurant/orders"
+            className="rounded-lg bg-blue-500 px-5 py-3 font-semibold text-white hover:bg-blue-600"
+          >
+            Manage Orders
+          </Link>
 
         </div>
 

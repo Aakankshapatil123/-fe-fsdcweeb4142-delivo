@@ -21,6 +21,7 @@ import OrderDetails from "./pages/OrderDetails";
 import RestaurantOwner from "./pages/RestaurantOwner";
 import RestaurantOrders from "./pages/RestaurantOrders";
 import AdminOrders from "./pages/Dashboard";
+import RestaurantMenu from "./pages/RestaurantMenu";
 
 const router = createBrowserRouter([
   // authentication pages
@@ -53,6 +54,12 @@ const router = createBrowserRouter([
       {
         path: "/restaurant/owner",
         element: <RestaurantOwner />,
+      },
+
+
+      {
+        path: "/restaurant/menu",
+        element: <RestaurantMenu />,
       },
 
       {
