@@ -3,11 +3,11 @@ import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 
 import {
-  getAllOrders,
-  updateAdminOrderStatus,
-} from "../services/adminOrderServices";
+  getRestaurantOrders,
+  updateRestaurantOrderStatus,
+} from "../services/restaurantOrderServices";
 
-const AdminOrders = () => {
+const RestaurantOrders = () => {
   const navigate = useNavigate();
 
   const { isAuthenticated } = useSelector(
@@ -20,10 +20,10 @@ const AdminOrders = () => {
   const [updatingOrderId, setUpdatingOrderId] =
     useState(null);
 
-  // ================= FETCH ALL ORDERS =================
+  // ================= GET RESTAURANT ORDERS =================
 
   useEffect(() => {
-    const fetchOrders = async () => {
+    const fetchRestaurantOrders = async () => {
       if (!isAuthenticated) {
         navigate("/login");
         return;
@@ -33,33 +33,30 @@ const AdminOrders = () => {
         setLoading(true);
         setError("");
 
-        const response = await getAllOrders();
+        const response =
+          await getRestaurantOrders();
 
-        setOrders(
-          response.orders ||
-            response.result ||
-            []
-        );
+        setOrders(response.result || []);
       } catch (error) {
         console.log(
-          "ADMIN ORDERS ERROR:",
+          "RESTAURANT ORDERS ERROR:",
           error.response?.data?.message ||
             error.message
         );
 
         setError(
           error.response?.data?.message ||
-            "Failed to load orders."
+            "Failed to load restaurant orders."
         );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchOrders();
+    fetchRestaurantOrders();
   }, [isAuthenticated, navigate]);
 
-  // ================= UPDATE STATUS =================
+  // ================= UPDATE ORDER STATUS =================
 
   const handleStatusChange = async (
     orderId,
@@ -69,13 +66,10 @@ const AdminOrders = () => {
       setUpdatingOrderId(orderId);
 
       const response =
-        await updateAdminOrderStatus(
+        await updateRestaurantOrderStatus(
           orderId,
           orderStatus
         );
-
-      const updatedOrder =
-        response.result;
 
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
@@ -83,7 +77,7 @@ const AdminOrders = () => {
             ? {
                 ...order,
                 orderStatus:
-                  updatedOrder?.orderStatus ||
+                  response.result?.orderStatus ||
                   orderStatus,
               }
             : order
@@ -91,7 +85,7 @@ const AdminOrders = () => {
       );
     } catch (error) {
       console.log(
-        "ADMIN STATUS UPDATE ERROR:",
+        "UPDATE ORDER STATUS ERROR:",
         error.response?.data?.message ||
           error.message
       );
@@ -105,7 +99,7 @@ const AdminOrders = () => {
     }
   };
 
-  // ================= STATUS STYLE =================
+  // ================= STATUS COLOR =================
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -132,7 +126,7 @@ const AdminOrders = () => {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-gray-50">
         <p className="text-lg font-semibold text-gray-600">
-          Loading all orders...
+          Loading restaurant orders...
         </p>
       </div>
     );
@@ -144,6 +138,7 @@ const AdminOrders = () => {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-gray-50 px-6">
         <div className="text-center">
+
           <p className="font-semibold text-red-500">
             {error}
           </p>
@@ -157,6 +152,7 @@ const AdminOrders = () => {
           >
             Try Again
           </button>
+
         </div>
       </div>
     );
@@ -164,17 +160,18 @@ const AdminOrders = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10 md:px-10">
+
       <div className="mx-auto max-w-7xl">
 
         {/* ================= HEADER ================= */}
 
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
-            Admin Orders
+            Restaurant Orders
           </h1>
 
           <p className="mt-2 text-gray-600">
-            View and manage all customer orders.
+            Manage customer orders and update order status.
           </p>
         </div>
 
@@ -182,6 +179,7 @@ const AdminOrders = () => {
 
         {orders.length === 0 ? (
           <div className="rounded-2xl bg-white p-12 text-center shadow-md">
+
             <div className="text-6xl">
               📦
             </div>
@@ -193,11 +191,13 @@ const AdminOrders = () => {
             <p className="mt-2 text-gray-500">
               Customer orders will appear here.
             </p>
+
           </div>
         ) : (
           <div className="space-y-6">
 
             {orders.map((order) => {
+
               const itemCount =
                 order.items?.reduce(
                   (total, item) =>
@@ -246,64 +246,26 @@ const AdminOrders = () => {
 
                   </div>
 
-                  {/* ================= CUSTOMER + RESTAURANT ================= */}
+                  {/* ================= CUSTOMER ================= */}
 
-                  <div className="mt-6 grid gap-4 md:grid-cols-2">
+                  <div className="mt-5">
 
-                    <div className="rounded-xl bg-gray-50 p-4">
+                    <h2 className="text-xl font-bold text-gray-900">
+                      Customer Order
+                    </h2>
 
-                      <p className="text-sm text-gray-500">
-                        Customer
-                      </p>
-
-                      <p className="mt-1 font-semibold text-gray-800">
-                        {order.user?.name ||
-                          "Customer"}
-                      </p>
-
-                      {order.user?.email ? (
-                        <p className="mt-1 text-sm text-gray-500">
-                          {order.user.email}
-                        </p>
-                      ) : (
-                        typeof order.user ===
-                          "string" && (
-                          <p className="mt-1 break-all text-sm text-gray-500">
-                            {order.user}
-                          </p>
-                        )
-                      )}
-
-                    </div>
-
-                    <div className="rounded-xl bg-gray-50 p-4">
-
-                      <p className="text-sm text-gray-500">
-                        Restaurant
-                      </p>
-
-                      <p className="mt-1 font-semibold text-gray-800">
-                        {order.restaurant?.name ||
-                          "Restaurant"}
-                      </p>
-
-                      {order.restaurant
-                        ?.cuisine && (
-                        <p className="mt-1 text-sm text-gray-500">
-                          {order.restaurant.cuisine}
-                        </p>
-                      )}
-
-                    </div>
+                    <p className="mt-2 text-sm text-gray-600">
+                      User ID: {order.user}
+                    </p>
 
                   </div>
 
-                  {/* ================= ORDER ITEMS ================= */}
+                  {/* ================= ITEMS ================= */}
 
-                  <div className="mt-6">
+                  <div className="mt-5">
 
                     <h3 className="text-lg font-bold text-gray-900">
-                      Order Items
+                      Items
                     </h3>
 
                     <div className="mt-3 space-y-3">
@@ -311,7 +273,7 @@ const AdminOrders = () => {
                       {order.items?.map(
                         (item, index) => {
 
-                          const baseTotal =
+                          const itemBaseTotal =
                             Number(
                               item.price || 0
                             ) *
@@ -342,7 +304,7 @@ const AdminOrders = () => {
                               : 0;
 
                           const itemTotal =
-                            baseTotal +
+                            itemBaseTotal +
                             extrasTotal;
 
                           return (
@@ -357,6 +319,7 @@ const AdminOrders = () => {
                               <div className="flex flex-col justify-between gap-3 sm:flex-row">
 
                                 <div>
+
                                   <p className="font-semibold text-gray-800">
                                     {item.name}
                                   </p>
@@ -365,6 +328,7 @@ const AdminOrders = () => {
                                     ₹{item.price} ×{" "}
                                     {item.quantity}
                                   </p>
+
                                 </div>
 
                                 <p className="font-semibold text-orange-500">
@@ -384,29 +348,32 @@ const AdminOrders = () => {
                                       Extras
                                     </p>
 
-                                    {item.extras.map(
-                                      (
-                                        extra,
-                                        extraIndex
-                                      ) => (
-                                        <p
-                                          key={
-                                            extra._id ||
-                                            extraIndex
-                                          }
-                                          className="mt-1 text-sm text-gray-600"
-                                        >
-                                          +{" "}
-                                          {
-                                            extra.name
-                                          }{" "}
-                                          ₹
-                                          {
-                                            extra.price
-                                          }
-                                        </p>
-                                      )
-                                    )}
+                                    <div className="mt-2 space-y-1 text-sm text-gray-600">
+
+                                      {item.extras.map(
+                                        (
+                                          extra,
+                                          extraIndex
+                                        ) => (
+                                          <p
+                                            key={
+                                              extra._id ||
+                                              extraIndex
+                                            }
+                                          >
+                                            +{" "}
+                                            {
+                                              extra.name
+                                            }{" "}
+                                            ₹
+                                            {
+                                              extra.price
+                                            }
+                                          </p>
+                                        )
+                                      )}
+
+                                    </div>
 
                                   </div>
                                 )}
@@ -435,13 +402,15 @@ const AdminOrders = () => {
                       )}
 
                     </div>
+
                   </div>
 
-                  {/* ================= SUMMARY ================= */}
+                  {/* ================= ORDER SUMMARY ================= */}
 
                   <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
                     <div className="rounded-xl bg-gray-50 p-4">
+
                       <p className="text-sm text-gray-500">
                         Items
                       </p>
@@ -449,9 +418,11 @@ const AdminOrders = () => {
                       <p className="mt-1 font-semibold text-gray-800">
                         {itemCount}
                       </p>
+
                     </div>
 
                     <div className="rounded-xl bg-gray-50 p-4">
+
                       <p className="text-sm text-gray-500">
                         Total
                       </p>
@@ -459,19 +430,23 @@ const AdminOrders = () => {
                       <p className="mt-1 font-semibold text-orange-500">
                         ₹{order.totalAmount}
                       </p>
+
                     </div>
 
                     <div className="rounded-xl bg-gray-50 p-4">
+
                       <p className="text-sm text-gray-500">
-                        Payment Method
+                        Payment
                       </p>
 
                       <p className="mt-1 font-semibold text-gray-800">
                         {order.paymentMethod}
                       </p>
+
                     </div>
 
                     <div className="rounded-xl bg-gray-50 p-4">
+
                       <p className="text-sm text-gray-500">
                         Payment Status
                       </p>
@@ -489,6 +464,7 @@ const AdminOrders = () => {
                       >
                         {order.paymentStatus}
                       </p>
+
                     </div>
 
                   </div>
@@ -502,8 +478,8 @@ const AdminOrders = () => {
                     </h3>
 
                     <p className="mt-2 text-sm text-gray-600">
-                      {order.deliveryAddress
-                        ?.address || "N/A"}
+                      {order.deliveryAddress?.address ||
+                        "N/A"}
                     </p>
 
                     <p className="text-sm text-gray-600">
@@ -601,4 +577,4 @@ const AdminOrders = () => {
   );
 };
 
-export default AdminOrders;
+export default RestaurantOrders;

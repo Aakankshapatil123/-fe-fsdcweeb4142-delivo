@@ -16,8 +16,11 @@ import RestaurantDashboard from "./pages/RestaurantDashboard";
 import ProtectedRoute from "./components/ProtectedRouter";
 import Checkout from "./pages/checkout";
 import Favorites from "./pages/Favorites";
-
-
+import Orders from "./pages/Order";
+import OrderDetails from "./pages/OrderDetails";
+import RestaurantOwner from "./pages/RestaurantOwner";
+import RestaurantOrders from "./pages/RestaurantOrders";
+import AdminOrders from "./pages/Dashboard";
 
 const router = createBrowserRouter([
   // authentication pages
@@ -30,70 +33,93 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
- {
-  element:<ProtectedRoute />,
-  children: [
-     {
-    path:"/admin/dashboard",
-    element: <AdminDashboard />
-  },
   {
-    path: "/restaurant/dashboard",
-    element: <RestaurantDashboard />,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: "/admin/dashboard",
+        element: <AdminDashboard />,
+      },
+
+      {
+        path: "/admin/orders",
+        element: <AdminOrders />,
+      },
+      {
+        path: "/restaurant/dashboard",
+        element: <RestaurantDashboard />,
+      },
+
+      {
+        path: "/restaurant/owner",
+        element: <RestaurantOwner />,
+      },
+
+      {
+        path: "/restaurant/orders",
+        element: <RestaurantOrders />,
+      },
+    ],
   },
-  ]
- },
 
   // Main appliaction
 
- {
-  path: "/",
-  element: <Navwrapper />,
-  children: [
-    {
-      path: "/",
-      element: <Home />,
-    },
+  {
+    path: "/",
+    element: <Navwrapper />,
+    children: [
+      {
+        path: "/",
+        element: <Home />,
+      },
 
-    {
-      path: "restaurants",
-      element: <Restaurants />,
-    },
+      {
+        path: "restaurants",
+        element: <Restaurants />,
+      },
 
-    
-    {
-      path: "restaurants/:id",
-      element: <RestaurantDetails />,
-    },
+      {
+        path: "restaurants/:id",
+        element: <RestaurantDetails />,
+      },
 
-    {
-      path: "favorites",
-      element: <Favorites />,
-    },
-   
-    {
-      path: "profile",
-      element: <Profile />,
-    },
+      {
+        path: "favorites",
+        element: <Favorites />,
+      },
 
-    {
-      path: "cart",
-      element: <Cart/>,
-    },
+      {
+        path: "orders",
+        element: <Orders />,
+      },
 
-     {
-      path: "checkout",
-      element: <Checkout />,
-    },
+      {
+        path: "orders/:id",
+        element: <OrderDetails />,
+      },
 
-  ]
- }
+      {
+        path: "profile",
+        element: <Profile />,
+      },
+
+      {
+        path: "cart",
+        element: <Cart />,
+      },
+
+      {
+        path: "checkout",
+        element: <Checkout />,
+      },
+    ],
+  },
 ]);
 
 const App = () => {
   return (
     <>
-        <RouterProvider router={router} />
+      <RouterProvider router={router} />
 
       <ToastContainer
         position="top-right"

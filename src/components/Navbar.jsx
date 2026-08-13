@@ -75,6 +75,13 @@ const Navbar = () => {
             Favorites
           </Link>
 
+            {/* Orders */}
+           <Link to="/orders"
+             className="font-medium text-gray-700 transition hover:text-blue-600"
+           >
+            Orders
+          </Link>
+
           {/* Cart */}
           <Link
             to="/cart"
