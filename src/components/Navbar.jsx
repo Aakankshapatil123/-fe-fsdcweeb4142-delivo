@@ -69,24 +69,36 @@ const Navbar = () => {
           </Link>
 
           {/* Favorites */}
-          <Link to="/favorites"
-           className="font-medium text-gray-700 transition hover:text-blue-600"
+          <Link
+            to="/favorites"
+            className="font-medium text-gray-700 transition hover:text-blue-600"
           >
             Favorites
           </Link>
 
-            {/* Orders */}
-           <Link to="/orders"
-             className="font-medium text-gray-700 transition hover:text-blue-600"
-           >
+          {/* Orders */}
+          <Link
+            to="/orders"
+            className="font-medium text-gray-700 transition hover:text-blue-600"
+          >
             Orders
           </Link>
+
+          {/* Notifications - Only for User */}
+          {isAuthenticated && user?.role === "user" && (
+            <Link
+              to="/notifications"
+              className="font-medium text-gray-700 transition hover:text-blue-600"
+            >
+              🔔 Notifications
+            </Link>
+          )}
 
           {/* Cart */}
           <Link
             to="/cart"
             className="font-medium text-gray-700 transition hover:text-blue-600"
-            >
+          >
             🛒 Cart
           </Link>
 
@@ -151,7 +163,6 @@ const Navbar = () => {
               </button>
             </>
           )}
-
         </div>
 
         {/* Mobile Menu Button */}

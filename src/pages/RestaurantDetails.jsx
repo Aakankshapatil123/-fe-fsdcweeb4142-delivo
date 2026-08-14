@@ -4,6 +4,14 @@ import { useParams, useNavigate } from "react-router";
 
 import { getRestaurantById } from "../services/restaurantServices";
 import { getRestaurantMenu } from "../services/menuServices";
+
+import {
+  getRestaurantReviews,
+  addReview,
+  updateReview,
+  deleteReview,
+} from "../services/reviewServices";
+
 import { addToCart } from "../redux/cartSlice";
 
 import MenuCard from "../components/MenuCard";
@@ -15,11 +23,11 @@ const RestaurantDetails = () => {
 
   // ================= AUTH =================
 
-  const { isAuthenticated } = useSelector(
+  const { isAuthenticated, user } = useSelector(
     (state) => state.auth
   );
 
-  // ================= STATE =================
+  // ================= RESTAURANT + MENU STATE =================
 
   const [restaurant, setRestaurant] = useState(null);
   const [menus, setMenus] = useState([]);
@@ -27,27 +35,89 @@ const RestaurantDetails = () => {
   const [selectedCategory, setSelectedCategory] =
     useState("All");
 
-  // Selected menu for customization
+  // ================= CUSTOMIZATION STATE =================
+
   const [selectedMenu, setSelectedMenu] =
     useState(null);
 
-  // Selected extras
   const [selectedExtras, setSelectedExtras] =
     useState([]);
 
-  // Special instructions
   const [specialInstructions, setSpecialInstructions] =
     useState("");
+
+  // ================= PAGE STATE =================
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ================= FETCH RESTAURANT + MENU =================
+  // ================= REVIEW STATE =================
+
+  const [reviews, setReviews] = useState([]);
+
+  const [reviewLoading, setReviewLoading] =
+    useState(false);
+
+  const [rating, setRating] = useState(5);
+
+  const [comment, setComment] = useState("");
+
+  const [editingReviewId, setEditingReviewId] =
+    useState(null);
+
+  // =====================================================
+  // UPDATE RESTAURANT RATING FROM REVIEWS
+  // =====================================================
+
+  const updateRestaurantRating = (reviewList) => {
+    if (!reviewList || reviewList.length === 0) {
+      setRestaurant((prev) =>
+        prev
+          ? {
+              ...prev,
+              rating: 0,
+              totalReviews: 0,
+            }
+          : prev
+      );
+
+      return;
+    }
+
+    const totalRating = reviewList.reduce(
+      (total, review) =>
+        total + Number(review.rating || 0),
+      0
+    );
+
+    const averageRating =
+      totalRating / reviewList.length;
+
+    setRestaurant((prev) =>
+      prev
+        ? {
+            ...prev,
+            rating: Number(
+              averageRating.toFixed(1)
+            ),
+            totalReviews: reviewList.length,
+          }
+        : prev
+    );
+  };
+
+  // =====================================================
+  // FETCH RESTAURANT + MENU
+  // =====================================================
 
   useEffect(() => {
     const fetchRestaurantData = async () => {
       try {
-        // Restaurant details
+        setLoading(true);
+        setError("");
+
+        // ================= RESTAURANT =================
+
         const restaurantResponse =
           await getRestaurantById(id);
 
@@ -60,7 +130,8 @@ const RestaurantDetails = () => {
           restaurantResponse.restaurant
         );
 
-        // Restaurant menu
+        // ================= MENU =================
+
         const menuResponse =
           await getRestaurantMenu(id);
 
@@ -70,6 +141,7 @@ const RestaurantDetails = () => {
         );
 
         setMenus(menuResponse.menus || []);
+
       } catch (error) {
         console.log(
           "RESTAURANT DETAILS ERROR:",
@@ -88,7 +160,54 @@ const RestaurantDetails = () => {
     fetchRestaurantData();
   }, [id]);
 
-  // ================= MENU CATEGORIES =================
+  // =====================================================
+  // FETCH RESTAURANT REVIEWS
+  // =====================================================
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        setReviewLoading(true);
+
+        const response =
+          await getRestaurantReviews(id);
+
+        console.log(
+          "RESTAURANT REVIEWS:",
+          response
+        );
+
+        const reviewList =
+          response.result || [];
+
+        setReviews(reviewList);
+
+        // Update restaurant rating
+        updateRestaurantRating(reviewList);
+
+      } catch (error) {
+        console.log(
+          "GET REVIEWS ERROR:",
+          error.response?.data?.message ||
+            error.message
+        );
+
+        setReviews([]);
+
+        // No reviews = rating 0
+        updateRestaurantRating([]);
+
+      } finally {
+        setReviewLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [id]);
+
+  // =====================================================
+  // MENU CATEGORIES
+  // =====================================================
 
   const categories = [
     "All",
@@ -99,7 +218,9 @@ const RestaurantDetails = () => {
     ),
   ];
 
-  // ================= FILTER MENU =================
+  // =====================================================
+  // FILTER MENU
+  // =====================================================
 
   const filteredMenus =
     selectedCategory === "All"
@@ -109,10 +230,11 @@ const RestaurantDetails = () => {
             menu.category === selectedCategory
         );
 
-  // ================= OPEN CUSTOMIZATION =================
+  // =====================================================
+  // OPEN CUSTOMIZATION
+  // =====================================================
 
   const openCustomization = (menu) => {
-    // Login required for Add to Cart
     if (!isAuthenticated) {
       navigate("/login");
       return;
@@ -123,7 +245,9 @@ const RestaurantDetails = () => {
     setSpecialInstructions("");
   };
 
-  // ================= CLOSE CUSTOMIZATION =================
+  // =====================================================
+  // CLOSE CUSTOMIZATION
+  // =====================================================
 
   const closeCustomization = () => {
     setSelectedMenu(null);
@@ -131,7 +255,9 @@ const RestaurantDetails = () => {
     setSpecialInstructions("");
   };
 
-  // ================= EXTRA SELECT =================
+  // =====================================================
+  // EXTRA SELECT
+  // =====================================================
 
   const handleExtraChange = (extra) => {
     const extraPrice = Number(
@@ -165,26 +291,25 @@ const RestaurantDetails = () => {
     }
   };
 
-  // ================= ADD TO CART =================
+  // =====================================================
+  // ADD TO CART
+  // =====================================================
 
   const handleAddToCart = () => {
     if (!selectedMenu || !restaurant) {
       return;
     }
 
-    // Extra total
     const extrasTotal = selectedExtras.reduce(
       (total, extra) =>
         total + Number(extra.price || 0),
       0
     );
 
-    // Final price
     const finalPrice =
       Number(selectedMenu.price || 0) +
       extrasTotal;
 
-    // Unique cart item ID
     const cartItemId = [
       selectedMenu._id,
 
@@ -198,32 +323,31 @@ const RestaurantDetails = () => {
       specialInstructions.trim(),
     ].join("__");
 
-    // Add to Redux cart
     dispatch(
       addToCart({
         cartItemId,
 
-        // Menu
         _id: selectedMenu._id,
+
         name: selectedMenu.name,
+
         price: Number(
           selectedMenu.price || 0
         ),
+
         image: selectedMenu.image,
 
-        // Restaurant
         restaurantId: restaurant._id,
+
         restaurantName: restaurant.name,
 
-        // Extras
         extras: selectedExtras,
+
         extrasTotal,
 
-        // Special instructions
         specialInstructions:
           specialInstructions.trim(),
 
-        // Final price
         finalPrice,
       })
     );
@@ -231,7 +355,173 @@ const RestaurantDetails = () => {
     closeCustomization();
   };
 
-  // ================= LOADING =================
+  // =====================================================
+  // ADD / UPDATE REVIEW
+  // =====================================================
+
+  const handleReviewSubmit = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    if (!comment.trim()) {
+      alert("Please enter your review.");
+      return;
+    }
+
+    try {
+      setReviewLoading(true);
+
+      const reviewData = {
+        restaurant: id,
+        rating: Number(rating),
+        comment: comment.trim(),
+      };
+
+      // ================= UPDATE =================
+
+      if (editingReviewId) {
+        await updateReview(
+          editingReviewId,
+          reviewData
+        );
+      }
+
+      // ================= ADD =================
+
+      else {
+        await addReview(reviewData);
+      }
+
+      // ================= GET UPDATED REVIEWS =================
+
+      const response =
+        await getRestaurantReviews(id);
+
+      const reviewList =
+        response.result || [];
+
+      // Update reviews
+      setReviews(reviewList);
+
+      // Update restaurant rating
+      updateRestaurantRating(reviewList);
+
+      // ================= RESET FORM =================
+
+      const wasEditing =
+        Boolean(editingReviewId);
+
+      setRating(5);
+      setComment("");
+      setEditingReviewId(null);
+
+      alert(
+        wasEditing
+          ? "Review updated successfully."
+          : "Review added successfully."
+      );
+
+    } catch (error) {
+      console.log(
+        "REVIEW ERROR:",
+        error.response?.data?.message ||
+          error.message
+      );
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to submit review."
+      );
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
+  // =====================================================
+  // EDIT REVIEW
+  // =====================================================
+
+  const handleEditReview = (review) => {
+    setEditingReviewId(review._id);
+
+    setRating(
+      Number(review.rating || 5)
+    );
+
+    setComment(review.comment || "");
+
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+  };
+
+  // =====================================================
+  // DELETE REVIEW
+  // =====================================================
+
+  const handleDeleteReview = async (reviewId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this review?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setReviewLoading(true);
+
+      // Delete review
+      await deleteReview(reviewId);
+
+      // Get latest reviews
+      const response =
+        await getRestaurantReviews(id);
+
+      const reviewList =
+        response.result || [];
+
+      // Update reviews
+      setReviews(reviewList);
+
+      // Update restaurant rating
+      updateRestaurantRating(reviewList);
+
+      alert("Review deleted successfully.");
+
+    } catch (error) {
+      console.log(
+        "DELETE REVIEW ERROR:",
+        error.response?.data?.message ||
+          error.message
+      );
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to delete review."
+      );
+
+    } finally {
+      setReviewLoading(false);
+    }
+  };
+
+  // =====================================================
+  // CANCEL EDIT
+  // =====================================================
+
+  const handleCancelEdit = () => {
+    setEditingReviewId(null);
+    setRating(5);
+    setComment("");
+  };
+
+  // =====================================================
+  // LOADING
+  // =====================================================
 
   if (loading) {
     return (
@@ -243,7 +533,9 @@ const RestaurantDetails = () => {
     );
   }
 
-  // ================= ERROR =================
+  // =====================================================
+  // ERROR
+  // =====================================================
 
   if (error) {
     return (
@@ -269,22 +561,30 @@ const RestaurantDetails = () => {
     );
   }
 
-  // ================= RESTAURANT NOT FOUND =================
+  // =====================================================
+  // RESTAURANT NOT FOUND
+  // =====================================================
 
   if (!restaurant) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-gray-50">
+
         <p className="text-lg font-semibold text-gray-600">
           Restaurant not found
         </p>
+
       </div>
     );
   }
 
+  // =====================================================
+  // RETURN
+  // =====================================================
+
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* ================= BACK BUTTON ================= */}
+      {/* BACK BUTTON */}
 
       <div className="mx-auto max-w-7xl px-6 pt-6 md:px-10">
 
@@ -300,35 +600,37 @@ const RestaurantDetails = () => {
 
       </div>
 
-      {/* ================= RESTAURANT IMAGE ================= */}
+      {/* RESTAURANT IMAGE */}
 
       <div className="mx-auto mt-6 max-w-7xl px-6 md:px-10">
 
         <div className="h-72 overflow-hidden rounded-2xl bg-gray-200 md:h-96">
 
           {restaurant.image ? (
+
             <img
               src={`http://localhost:3001${restaurant.image}`}
               alt={restaurant.name}
               className="h-full w-full object-cover"
             />
+
           ) : (
+
             <div className="flex h-full items-center justify-center text-gray-400">
               No Image
             </div>
+
           )}
 
         </div>
 
       </div>
 
-      {/* ================= RESTAURANT INFORMATION ================= */}
+      {/* RESTAURANT INFORMATION */}
 
       <div className="mx-auto max-w-7xl px-6 py-8 md:px-10">
 
         <div className="rounded-2xl bg-white p-6 shadow-md md:p-8">
-
-          {/* Name + Cuisine + Rating + Status */}
 
           <div className="flex flex-col justify-between gap-4 md:flex-row">
 
@@ -346,13 +648,25 @@ const RestaurantDetails = () => {
 
             <div className="flex items-center gap-3">
 
-              {/* Rating */}
+              {/* RESTAURANT RATING */}
 
               <span className="rounded-lg bg-green-100 px-4 py-2 font-semibold text-green-700">
-                ★ {restaurant.rating ?? 0}
+                ★ {Number(
+                  restaurant.rating || 0
+                ).toFixed(1)}
               </span>
 
-              {/* Open / Closed */}
+              {/* TOTAL REVIEWS */}
+
+              {restaurant.totalReviews !==
+                undefined && (
+                <span className="rounded-lg bg-gray-100 px-4 py-2 font-semibold text-gray-700">
+                  {restaurant.totalReviews}{" "}
+                  Reviews
+                </span>
+              )}
+
+              {/* OPEN / CLOSED */}
 
               <span
                 className={`rounded-lg px-4 py-2 font-semibold ${
@@ -370,18 +684,12 @@ const RestaurantDetails = () => {
 
           </div>
 
-          {/* Description */}
-
           <p className="mt-6 leading-7 text-gray-600">
             {restaurant.description ||
               "No description available."}
           </p>
 
-          {/* Restaurant Details */}
-
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-
-            {/* Location */}
 
             <div className="rounded-xl bg-gray-50 p-4">
 
@@ -396,15 +704,15 @@ const RestaurantDetails = () => {
               </p>
 
               <p className="text-sm text-gray-600">
-                {restaurant.location?.city || ""}
+                {restaurant.location?.city ||
+                  ""}
+
                 {restaurant.location?.state
                   ? `, ${restaurant.location.state}`
                   : ""}
               </p>
 
             </div>
-
-            {/* Opening Hours */}
 
             <div className="rounded-xl bg-gray-50 p-4">
 
@@ -420,8 +728,6 @@ const RestaurantDetails = () => {
 
             </div>
 
-            {/* Price Range */}
-
             <div className="rounded-xl bg-gray-50 p-4">
 
               <p className="text-sm text-gray-500">
@@ -429,7 +735,8 @@ const RestaurantDetails = () => {
               </p>
 
               <p className="mt-1 font-semibold text-gray-800">
-                {restaurant.priceRange || "₹"}
+                {restaurant.priceRange ||
+                  "₹"}
               </p>
 
             </div>
@@ -438,11 +745,11 @@ const RestaurantDetails = () => {
 
         </div>
 
-        {/* ================= MENU SECTION ================= */}
+        {/* =================================================
+            MENU SECTION
+        ================================================= */}
 
         <div className="mt-10">
-
-          {/* Menu Header */}
 
           <div className="mb-6">
 
@@ -457,36 +764,37 @@ const RestaurantDetails = () => {
 
           </div>
 
-          {/* ================= CATEGORIES ================= */}
-
           {menus.length > 0 && (
+
             <div className="mb-8 flex gap-3 overflow-x-auto pb-2">
 
-              {categories.map((category) => (
+              {categories.map(
+                (category) => (
 
-                <button
-                  key={category}
-                  type="button"
-                  onClick={() =>
-                    setSelectedCategory(
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() =>
+                      setSelectedCategory(
+                        category
+                      )
+                    }
+                    className={`whitespace-nowrap rounded-full px-5 py-2.5 font-semibold transition ${
+                      selectedCategory ===
                       category
-                    )
-                  }
-                  className={`whitespace-nowrap rounded-full px-5 py-2.5 font-semibold transition ${
-                    selectedCategory === category
-                      ? "bg-orange-500 text-white shadow-md"
-                      : "bg-white text-gray-700 shadow-sm hover:bg-orange-50"
-                  }`}
-                >
-                  {category}
-                </button>
+                        ? "bg-orange-500 text-white shadow-md"
+                        : "bg-white text-gray-700 shadow-sm hover:bg-orange-50"
+                    }`}
+                  >
+                    {category}
+                  </button>
 
-              ))}
+                )
+              )}
 
             </div>
-          )}
 
-          {/* ================= MENU ITEMS ================= */}
+          )}
 
           {menus.length === 0 ? (
 
@@ -501,7 +809,8 @@ const RestaurantDetails = () => {
               </h3>
 
               <p className="mt-2 text-gray-500">
-                This restaurant has not added any menu items yet.
+                This restaurant has not added
+                any menu items yet.
               </p>
 
             </div>
@@ -538,19 +847,351 @@ const RestaurantDetails = () => {
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 
-              {filteredMenus.map((menu) => (
+              {filteredMenus.map(
+                (menu) => (
 
-                <MenuCard
-                  key={menu._id}
-                  menu={menu}
-                  onCustomize={openCustomization}
-                />
+                  <MenuCard
+                    key={menu._id}
+                    menu={menu}
+                    onCustomize={
+                      openCustomization
+                    }
+                  />
 
-              ))}
+                )
+              )}
 
             </div>
 
           )}
+
+        </div>
+
+        {/* =================================================
+            CUSTOMER REVIEWS
+        ================================================= */}
+
+        <div className="mt-12">
+
+          {/* REVIEW HEADER */}
+
+          <div className="mb-6">
+
+            <h2 className="text-3xl font-bold text-gray-900">
+              Customer Reviews
+            </h2>
+
+            <p className="mt-2 text-gray-600">
+              See what customers are saying
+              about {restaurant.name}
+            </p>
+
+          </div>
+
+          {/* REVIEW FORM */}
+
+          {isAuthenticated ? (
+
+            <div className="rounded-2xl bg-white p-6 shadow-md">
+
+              <h3 className="text-xl font-bold text-gray-900">
+
+                {editingReviewId
+                  ? "Edit Your Review"
+                  : "Write a Review"}
+
+              </h3>
+
+              {/* RATING */}
+
+              <div className="mt-5">
+
+                <p className="mb-2 font-semibold text-gray-700">
+                  Rating
+                </p>
+
+                <div className="flex gap-2">
+
+                  {[1, 2, 3, 4, 5].map(
+                    (star) => (
+
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() =>
+                          setRating(star)
+                        }
+                        className={`text-3xl transition ${
+                          star <= rating
+                            ? "text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      >
+                        ★
+                      </button>
+
+                    )
+                  )}
+
+                </div>
+
+              </div>
+
+              {/* COMMENT */}
+
+              <div className="mt-5">
+
+                <label className="mb-2 block font-semibold text-gray-700">
+                  Your Review
+                </label>
+
+                <textarea
+                  value={comment}
+                  onChange={(e) =>
+                    setComment(
+                      e.target.value
+                    )
+                  }
+                  rows="4"
+                  placeholder="Write your review..."
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
+                />
+
+              </div>
+
+              {/* BUTTONS */}
+
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+
+                <button
+                  type="button"
+                  onClick={
+                    handleReviewSubmit
+                  }
+                  disabled={reviewLoading}
+                  className={`rounded-lg px-6 py-3 font-semibold text-white ${
+                    reviewLoading
+                      ? "cursor-not-allowed bg-gray-400"
+                      : "bg-orange-500 hover:bg-orange-600"
+                  }`}
+                >
+                  {reviewLoading
+                    ? "Submitting..."
+                    : editingReviewId
+                    ? "Update Review"
+                    : "Submit Review"}
+                </button>
+
+                {editingReviewId && (
+
+                  <button
+                    type="button"
+                    onClick={
+                      handleCancelEdit
+                    }
+                    className="rounded-lg border border-gray-300 px-6 py-3 font-semibold text-gray-700 hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+
+                )}
+
+              </div>
+
+            </div>
+
+          ) : (
+
+            <div className="rounded-2xl bg-white p-6 text-center shadow-md">
+
+              <p className="text-gray-600">
+                Please login to write a review.
+              </p>
+
+              <button
+                type="button"
+                onClick={() =>
+                  navigate("/login")
+                }
+                className="mt-4 rounded-lg bg-orange-500 px-6 py-3 font-semibold text-white hover:bg-orange-600"
+              >
+                Login to Review
+              </button>
+
+            </div>
+
+          )}
+
+          {/* REVIEW LIST */}
+
+          <div className="mt-6">
+
+            {reviewLoading &&
+            reviews.length === 0 ? (
+
+              <div className="rounded-2xl bg-white p-8 text-center shadow-md">
+
+                <p className="font-semibold text-gray-600">
+                  Loading reviews...
+                </p>
+
+              </div>
+
+            ) : reviews.length === 0 ? (
+
+              <div className="rounded-2xl bg-white p-8 text-center shadow-md">
+
+                <div className="text-5xl">
+                  ⭐
+                </div>
+
+                <h3 className="mt-4 text-xl font-bold text-gray-800">
+                  No Reviews Yet
+                </h3>
+
+                <p className="mt-2 text-gray-500">
+                  Be the first customer to
+                  review this restaurant.
+                </p>
+
+              </div>
+
+            ) : (
+
+              <div className="space-y-4">
+
+                {reviews.map(
+                  (review) => {
+
+                    // =========================================
+                    // CHECK CURRENT USER'S REVIEW
+                    // =========================================
+
+                    const reviewUserId =
+                      review.user?._id ||
+                      review.user;
+
+                    const currentUserId =
+                      user?._id ||
+                      user?.id;
+
+                    const isOwnReview =
+                      isAuthenticated &&
+                      String(reviewUserId) ===
+                        String(currentUserId);
+
+                    return (
+
+                      <div
+                        key={review._id}
+                        className="rounded-2xl bg-white p-6 shadow-md"
+                      >
+
+                        {/* USER + RATING */}
+
+                        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+
+                          <div>
+
+                            <p className="font-bold text-gray-900">
+                              {review.user?.name ||
+                                "Customer"}
+                            </p>
+
+                            <p className="mt-1 text-sm text-gray-500">
+                              {review.createdAt
+                                ? new Date(
+                                    review.createdAt
+                                  ).toLocaleDateString()
+                                : ""}
+                            </p>
+
+                          </div>
+
+                          {/* RATING */}
+
+                          <div className="flex items-center">
+
+                            {[1, 2, 3, 4, 5].map(
+                              (star) => (
+
+                                <span
+                                  key={star}
+                                  className={`text-xl ${
+                                    star <=
+                                    review.rating
+                                      ? "text-yellow-400"
+                                      : "text-gray-300"
+                                  }`}
+                                >
+                                  ★
+                                </span>
+
+                              )
+                            )}
+
+                            <span className="ml-2 font-semibold text-gray-700">
+                              {review.rating}/5
+                            </span>
+
+                          </div>
+
+                        </div>
+
+                        {/* COMMENT */}
+
+                        <p className="mt-4 leading-7 text-gray-600">
+                          {review.comment}
+                        </p>
+
+                        {/* OWN REVIEW ACTIONS */}
+
+                        {isOwnReview && (
+
+                          <div className="mt-4 flex gap-3 border-t pt-4">
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleEditReview(
+                                  review
+                                )
+                              }
+                              className="rounded-lg border border-orange-500 px-4 py-2 font-semibold text-orange-500 hover:bg-orange-50"
+                            >
+                              Edit
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleDeleteReview(
+                                  review._id
+                                )
+                              }
+                              disabled={
+                                reviewLoading
+                              }
+                              className="rounded-lg border border-red-500 px-4 py-2 font-semibold text-red-500 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                              Delete
+                            </button>
+
+                          </div>
+
+                        )}
+
+                      </div>
+
+                    );
+                  }
+                )}
+
+              </div>
+
+            )}
+
+          </div>
 
         </div>
 
@@ -566,14 +1207,15 @@ const RestaurantDetails = () => {
 
           <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
 
-            {/* Modal Header */}
+            {/* MODAL HEADER */}
 
             <div className="flex items-start justify-between gap-4">
 
               <div>
 
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Customize {selectedMenu.name}
+                  Customize{" "}
+                  {selectedMenu.name}
                 </h2>
 
                 <p className="mt-1 text-gray-500">
@@ -593,7 +1235,7 @@ const RestaurantDetails = () => {
 
             </div>
 
-            {/* ================= EXTRAS ================= */}
+            {/* EXTRAS */}
 
             <div className="mt-6">
 
@@ -614,11 +1256,16 @@ const RestaurantDetails = () => {
                           (item) =>
                             item.name ===
                               extra.name &&
-                            Number(item.price) ===
-                              Number(extra.price)
+                            Number(
+                              item.price
+                            ) ===
+                              Number(
+                                extra.price
+                              )
                         );
 
                       return (
+
                         <label
                           key={
                             extra._id ||
@@ -631,7 +1278,9 @@ const RestaurantDetails = () => {
 
                             <input
                               type="checkbox"
-                              checked={isSelected}
+                              checked={
+                                isSelected
+                              }
                               onChange={() =>
                                 handleExtraChange(
                                   extra
@@ -647,10 +1296,12 @@ const RestaurantDetails = () => {
                           </div>
 
                           <span className="font-semibold text-orange-500">
-                            + ₹{extra.price}
+                            + ₹
+                            {extra.price}
                           </span>
 
                         </label>
+
                       );
                     }
                   )}
@@ -660,14 +1311,15 @@ const RestaurantDetails = () => {
               ) : (
 
                 <p className="mt-3 rounded-lg bg-gray-50 p-3 text-sm text-gray-500">
-                  No extras available for this item.
+                  No extras available for
+                  this item.
                 </p>
 
               )}
 
             </div>
 
-            {/* ================= SPECIAL INSTRUCTIONS ================= */}
+            {/* SPECIAL INSTRUCTIONS */}
 
             <div className="mt-6">
 
@@ -689,7 +1341,7 @@ const RestaurantDetails = () => {
 
             </div>
 
-            {/* ================= FINAL PRICE ================= */}
+            {/* FINAL PRICE */}
 
             <div className="mt-6 flex items-center justify-between border-t pt-4">
 
@@ -698,6 +1350,7 @@ const RestaurantDetails = () => {
               </span>
 
               <span className="text-xl font-bold text-orange-500">
+
                 ₹
                 {Number(
                   selectedMenu.price || 0
@@ -705,14 +1358,17 @@ const RestaurantDetails = () => {
                   selectedExtras.reduce(
                     (total, extra) =>
                       total +
-                      Number(extra.price || 0),
+                      Number(
+                        extra.price || 0
+                      ),
                     0
                   )}
+
               </span>
 
             </div>
 
-            {/* ================= ADD TO CART ================= */}
+            {/* ADD TO CART */}
 
             <button
               type="button"
@@ -725,6 +1381,7 @@ const RestaurantDetails = () => {
           </div>
 
         </div>
+
       )}
 
     </div>

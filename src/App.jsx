@@ -22,6 +22,12 @@ import RestaurantOwner from "./pages/RestaurantOwner";
 import RestaurantOrders from "./pages/RestaurantOrders";
 import AdminOrders from "./pages/Dashboard";
 import RestaurantMenu from "./pages/RestaurantMenu";
+import AdminUsers from "./pages/AdminUsers";
+import AdminUserDetails from "./pages/AdminUserDetails";
+import AdminRestaurants from "./pages/AdminRestaurants";
+import Payment from "./pages/Payment";
+import Notifications from "./pages/Notification";
+import AdminReviews from "./pages/AdminReviews";
 
 const router = createBrowserRouter([
   // authentication pages
@@ -43,9 +49,30 @@ const router = createBrowserRouter([
       },
 
       {
+        path: "/admin/users",
+        element: <AdminUsers />,
+      },
+
+      {
+        path: "/admin/users/:id",
+        element: <AdminUserDetails />,
+      },
+
+      {
+        path: "/admin/restaurants",
+        element: <AdminRestaurants />,
+      },
+
+      {
         path: "/admin/orders",
         element: <AdminOrders />,
       },
+
+      {
+        path: "/admin/reviews",
+        element: <AdminReviews />,
+      },
+
       {
         path: "/restaurant/dashboard",
         element: <RestaurantDashboard />,
@@ -55,7 +82,6 @@ const router = createBrowserRouter([
         path: "/restaurant/owner",
         element: <RestaurantOwner />,
       },
-
 
       {
         path: "/restaurant/menu",
@@ -106,6 +132,11 @@ const router = createBrowserRouter([
       },
 
       {
+        path: "notifications",
+        element: <Notifications />,
+      },
+
+      {
         path: "profile",
         element: <Profile />,
       },
@@ -118,6 +149,11 @@ const router = createBrowserRouter([
       {
         path: "checkout",
         element: <Checkout />,
+      },
+
+      {
+        path: "payment/:orderId",
+        element: <Payment />,
       },
     ],
   },
