@@ -206,30 +206,52 @@ const RestaurantDetails = () => {
   }, [id]);
 
   // =====================================================
-  // MENU CATEGORIES
-  // =====================================================
+// MENU CATEGORIES
+// =====================================================
 
-  const categories = [
-    "All",
-    ...new Set(
-      menus
-        .map((menu) => menu.category)
-        .filter(Boolean)
-    ),
-  ];
+const categories = [
+  "All",
+  "Veg",
+  "Non-Veg",
+  ...new Set(
+    menus
+      .map((menu) => menu.category)
+      .filter(Boolean)
+  ),
+];
 
-  // =====================================================
-  // FILTER MENU
-  // =====================================================
+// =====================================================
+// FILTER MENU
+// =====================================================
 
-  const filteredMenus =
-    selectedCategory === "All"
-      ? menus
-      : menus.filter(
-          (menu) =>
-            menu.category === selectedCategory
-        );
+const filteredMenus = menus.filter((menu) => {
+  // ALL
+  if (selectedCategory === "All") {
+    return true;
+  }
 
+  // VEG
+  if (selectedCategory === "Veg") {
+    return (
+      String(menu.foodType || "").toLowerCase() ===
+      "veg"
+    );
+  }
+
+  // NON-VEG
+  if (selectedCategory === "Non-Veg") {
+    return (
+      String(menu.foodType || "").toLowerCase() ===
+      "non-veg"
+    );
+  }
+
+  // NORMAL CATEGORY
+  return (
+    String(menu.category || "").toLowerCase() ===
+    String(selectedCategory).toLowerCase()
+  );
+});
   // =====================================================
   // OPEN CUSTOMIZATION
   // =====================================================

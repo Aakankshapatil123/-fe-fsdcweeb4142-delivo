@@ -13,16 +13,13 @@ const MenuCard = ({ menu, onCustomize }) => {
 
   // ================= AUTH =================
 
-  const { isAuthenticated } = useSelector(
-    (state) => state.auth
-  );
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   // ================= FAVORITE STATE =================
 
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const [favoriteLoading, setFavoriteLoading] =
-    useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
 
   // ================= CHECK FAVORITE =================
 
@@ -34,17 +31,13 @@ const MenuCard = ({ menu, onCustomize }) => {
       }
 
       try {
-        const response =
-          await checkMenuFavorite(menu._id);
+        const response = await checkMenuFavorite(menu._id);
 
-        setIsFavorite(
-          response.isFavorite || false
-        );
+        setIsFavorite(response.isFavorite || false);
       } catch (error) {
         console.log(
           "CHECK MENU FAVORITE ERROR:",
-          error.response?.data?.message ||
-            error.message
+          error.response?.data?.message || error.message,
         );
 
         setIsFavorite(false);
@@ -80,8 +73,7 @@ const MenuCard = ({ menu, onCustomize }) => {
     } catch (error) {
       console.log(
         "MENU FAVORITE ERROR:",
-        error.response?.data?.message ||
-          error.message
+        error.response?.data?.message || error.message,
       );
     } finally {
       setFavoriteLoading(false);
@@ -90,11 +82,9 @@ const MenuCard = ({ menu, onCustomize }) => {
 
   return (
     <div className="overflow-hidden rounded-2xl bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-
       {/* ================= MENU IMAGE ================= */}
 
       <div className="relative h-48 w-full overflow-hidden bg-gray-200">
-
         {menu.image ? (
           <img
             src={`http://localhost:3001${menu.image}`}
@@ -126,33 +116,25 @@ const MenuCard = ({ menu, onCustomize }) => {
         >
           <span
             className={`text-2xl leading-none ${
-              isFavorite
-                ? "text-red-500"
-                : "text-gray-400"
+              isFavorite ? "text-red-500" : "text-gray-400"
             }`}
           >
             {isFavorite ? "♥" : "♡"}
           </span>
         </button>
-
       </div>
 
       {/* ================= MENU DETAILS ================= */}
 
       <div className="p-5">
-
         {/* Name + Price */}
 
         <div className="flex items-start justify-between gap-3">
-
-          <h3 className="text-xl font-bold text-gray-900">
-            {menu.name}
-          </h3>
+          <h3 className="text-xl font-bold text-gray-900">{menu.name}</h3>
 
           <span className="whitespace-nowrap text-lg font-bold text-orange-500">
             ₹{menu.price}
           </span>
-
         </div>
 
         {/* Category */}
@@ -164,50 +146,32 @@ const MenuCard = ({ menu, onCustomize }) => {
         {/* Description */}
 
         <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-600">
-          {menu.description ||
-            "No description available."}
+          {menu.description || "No description available."}
         </p>
 
         {/* ================= NUTRITION ================= */}
 
         {menu.nutrition && (
           <div className="mt-4 rounded-lg bg-gray-50 p-3">
-
             <p className="text-sm font-bold text-gray-800">
               Nutritional Information
             </p>
 
             <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-600">
+              <span>Calories: {menu.nutrition.calories ?? 0} kcal</span>
 
-              <span>
-                Calories:{" "}
-                {menu.nutrition.calories ?? 0} kcal
-              </span>
+              <span>Protein: {menu.nutrition.protein ?? 0} g</span>
 
-              <span>
-                Protein:{" "}
-                {menu.nutrition.protein ?? 0} g
-              </span>
+              <span>Carbs: {menu.nutrition.carbohydrates ?? 0} g</span>
 
-              <span>
-                Carbs:{" "}
-                {menu.nutrition.carbohydrates ?? 0} g
-              </span>
-
-              <span>
-                Fat:{" "}
-                {menu.nutrition.fat ?? 0} g
-              </span>
-
+              <span>Fat: {menu.nutrition.fat ?? 0} g</span>
             </div>
-
           </div>
         )}
 
         {/* ================= AVAILABILITY ================= */}
 
         <div className="mt-4">
-
           <span
             className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${
               menu.isAvailable
@@ -215,11 +179,8 @@ const MenuCard = ({ menu, onCustomize }) => {
                 : "bg-red-100 text-red-600"
             }`}
           >
-            {menu.isAvailable
-              ? "Available"
-              : "Not Available"}
+            {menu.isAvailable ? "Available" : "Not Available"}
           </span>
-
         </div>
 
         {/* ================= CUSTOMIZE BUTTON ================= */}
@@ -234,13 +195,9 @@ const MenuCard = ({ menu, onCustomize }) => {
               : "cursor-not-allowed bg-gray-400"
           }`}
         >
-          {menu.isAvailable
-            ? "Customize & Add"
-            : "Not Available"}
+          {menu.isAvailable ? "Customize & Add" : "Not Available"}
         </button>
-
       </div>
-
     </div>
   );
 };

@@ -28,9 +28,12 @@ import AdminRestaurants from "./pages/AdminRestaurants";
 import Payment from "./pages/Payment";
 import Notifications from "./pages/Notification";
 import AdminReviews from "./pages/AdminReviews";
+import RestaurantEdit from "./pages/RestaurantEdit";
 
 const router = createBrowserRouter([
-  // authentication pages
+  // =====================================================
+  // AUTHENTICATION PAGES
+  // =====================================================
   {
     path: "/login",
     element: <Login />,
@@ -40,6 +43,10 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
+
+  // =====================================================
+  // ADMIN + RESTAURANT PROTECTED ROUTES
+  // =====================================================
   {
     element: <ProtectedRoute />,
     children: [
@@ -84,6 +91,11 @@ const router = createBrowserRouter([
       },
 
       {
+        path: "/restaurant/owner/edit/:id",
+        element: <RestaurantEdit />,
+      },
+
+      {
         path: "/restaurant/menu",
         element: <RestaurantMenu />,
       },
@@ -95,7 +107,9 @@ const router = createBrowserRouter([
     ],
   },
 
-  // Main appliaction
+  // =====================================================
+  // MAIN APPLICATION
+  // =====================================================
 
   {
     path: "/",
@@ -116,44 +130,53 @@ const router = createBrowserRouter([
         element: <RestaurantDetails />,
       },
 
-      {
-        path: "favorites",
-        element: <Favorites />,
-      },
+      // =================================================
+      // USER PROTECTED ROUTES
+      // =================================================
 
       {
-        path: "orders",
-        element: <Orders />,
-      },
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: "favorites",
+            element: <Favorites />,
+          },
 
-      {
-        path: "orders/:id",
-        element: <OrderDetails />,
-      },
+          {
+            path: "orders",
+            element: <Orders />,
+          },
 
-      {
-        path: "notifications",
-        element: <Notifications />,
-      },
+          {
+            path: "orders/:id",
+            element: <OrderDetails />,
+          },
 
-      {
-        path: "profile",
-        element: <Profile />,
-      },
+          {
+            path: "notifications",
+            element: <Notifications />,
+          },
 
-      {
-        path: "cart",
-        element: <Cart />,
-      },
+          {
+            path: "profile",
+            element: <Profile />,
+          },
 
-      {
-        path: "checkout",
-        element: <Checkout />,
-      },
+          {
+            path: "cart",
+            element: <Cart />,
+          },
 
-      {
-        path: "payment/:orderId",
-        element: <Payment />,
+          {
+            path: "checkout",
+            element: <Checkout />,
+          },
+
+          {
+            path: "payment/:orderId",
+            element: <Payment />,
+          },
+        ],
       },
     ],
   },

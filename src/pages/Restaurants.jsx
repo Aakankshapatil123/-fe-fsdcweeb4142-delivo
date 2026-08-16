@@ -258,21 +258,12 @@ const Restaurants = () => {
             }
             className="rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
           >
-            <option value="">
-              All Locations
-            </option>
+
 
             <option value="Pune">
               Pune
             </option>
 
-            <option value="Mumbai">
-              Mumbai
-            </option>
-
-            <option value="Nashik">
-              Nashik
-            </option>
           </select>
 
           {/* Rating */}

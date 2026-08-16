@@ -13,7 +13,7 @@ const Cart = () => {
   const navigate = useNavigate();
 
   const cartItems = useSelector(
-    (state) => state.cart.items
+    (state) => state.cart.items 
   );
 
   // ================= TOTAL ITEMS =================

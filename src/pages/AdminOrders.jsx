@@ -15,7 +15,9 @@ const AdminOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
 
-  // ================= GET ALL ORDERS =================
+  // =========================================================
+  // GET ALL ORDERS
+  // =========================================================
 
   const fetchOrders = async () => {
     try {
@@ -46,7 +48,9 @@ const AdminOrders = () => {
     fetchOrders();
   }, []);
 
-  // ================= VIEW ORDER =================
+  // =========================================================
+  // VIEW ORDER
+  // =========================================================
 
   const handleViewOrder = async (id) => {
     try {
@@ -55,6 +59,7 @@ const AdminOrders = () => {
       console.log("ORDER DETAILS:", response);
 
       setSelectedOrder(response.result);
+
       setSelectedStatus(
         response.result?.orderStatus || "Pending"
       );
@@ -72,7 +77,9 @@ const AdminOrders = () => {
     }
   };
 
-  // ================= UPDATE STATUS =================
+  // =========================================================
+  // UPDATE ORDER STATUS
+  // =========================================================
 
   const handleUpdateStatus = async () => {
     if (!selectedOrder) return;
@@ -97,6 +104,7 @@ const AdminOrders = () => {
         )
       );
 
+      // Update selected order
       setSelectedOrder((prev) => ({
         ...prev,
         orderStatus: selectedStatus,
@@ -117,7 +125,9 @@ const AdminOrders = () => {
     }
   };
 
-  // ================= STATUS STYLE =================
+  // =========================================================
+  // ORDER STATUS STYLE
+  // =========================================================
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -141,7 +151,29 @@ const AdminOrders = () => {
     }
   };
 
-  // ================= LOADING =================
+  // =========================================================
+  // PAYMENT STATUS STYLE
+  // =========================================================
+
+  const getPaymentStatusClass = (status) => {
+    switch (status) {
+      case "Paid":
+        return "text-green-600";
+
+      case "Failed":
+        return "text-red-600";
+
+      case "Pending":
+        return "text-yellow-600";
+
+      default:
+        return "text-gray-600";
+    }
+  };
+
+  // =========================================================
+  // LOADING
+  // =========================================================
 
   if (loading) {
     return (
@@ -153,7 +185,9 @@ const AdminOrders = () => {
     );
   }
 
-  // ================= ERROR =================
+  // =========================================================
+  // ERROR
+  // =========================================================
 
   if (error) {
     return (
@@ -174,12 +208,18 @@ const AdminOrders = () => {
     );
   }
 
+  // =========================================================
+  // MAIN UI
+  // =========================================================
+
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10 md:px-10">
 
       <div className="mx-auto max-w-7xl">
 
-        {/* ================= HEADER ================= */}
+        {/* ===================================================
+            HEADER
+        ==================================================== */}
 
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
 
@@ -202,7 +242,9 @@ const AdminOrders = () => {
 
         </div>
 
-        {/* ================= NO ORDERS ================= */}
+        {/* ===================================================
+            NO ORDERS
+        ==================================================== */}
 
         {orders.length === 0 ? (
 
@@ -224,7 +266,9 @@ const AdminOrders = () => {
 
         ) : (
 
-          /* ================= ORDERS ================= */
+          /* =================================================
+             ORDERS LIST
+          ================================================== */
 
           <div className="space-y-5">
 
@@ -235,7 +279,9 @@ const AdminOrders = () => {
                 className="rounded-2xl bg-white p-6 shadow-md"
               >
 
-                {/* TOP */}
+                {/* =================================================
+                    TOP
+                ================================================== */}
 
                 <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
 
@@ -261,11 +307,15 @@ const AdminOrders = () => {
 
                 </div>
 
-                {/* ORDER INFORMATION */}
+                {/* =================================================
+                    ORDER INFORMATION
+                ================================================== */}
 
                 <div className="mt-5 grid gap-4 md:grid-cols-3">
 
-                  {/* CUSTOMER */}
+                  {/* =================================================
+                      CUSTOMER
+                  ================================================== */}
 
                   <div className="rounded-xl bg-gray-50 p-4">
 
@@ -283,7 +333,9 @@ const AdminOrders = () => {
 
                   </div>
 
-                  {/* RESTAURANT */}
+                  {/* =================================================
+                      RESTAURANT
+                  ================================================== */}
 
                   <div className="rounded-xl bg-gray-50 p-4">
 
@@ -301,28 +353,45 @@ const AdminOrders = () => {
 
                   </div>
 
-                  {/* AMOUNT */}
+                  {/* =================================================
+                      PAYMENT SUMMARY
+                  ================================================== */}
 
                   <div className="rounded-xl bg-gray-50 p-4">
 
                     <p className="text-sm text-gray-500">
-                      Total Amount
+                      Payment
                     </p>
 
                     <p className="mt-1 text-xl font-bold text-orange-600">
                       ₹{order.totalAmount || 0}
                     </p>
 
+                    <p className="mt-1 text-sm text-gray-600">
+                      Method:{" "}
+                      <span className="font-semibold">
+                        {order.paymentMethod || "N/A"}
+                      </span>
+                    </p>
+
                     <p className="text-sm text-gray-600">
-                      Payment:{" "}
-                      {order.paymentStatus || "N/A"}
+                      Status:{" "}
+                      <span
+                        className={`font-semibold ${getPaymentStatusClass(
+                          order.paymentStatus
+                        )}`}
+                      >
+                        {order.paymentStatus || "N/A"}
+                      </span>
                     </p>
 
                   </div>
 
                 </div>
 
-                {/* DATE + BUTTON */}
+                {/* =================================================
+                    DATE + BUTTON
+                ================================================== */}
 
                 <div className="mt-5 flex flex-col justify-between gap-4 border-t pt-5 md:flex-row md:items-center">
 
@@ -356,9 +425,9 @@ const AdminOrders = () => {
 
       </div>
 
-      {/* ================================================= */}
-      {/* ================= ORDER MODAL =================== */}
-      {/* ================================================= */}
+      {/* =====================================================
+          ORDER DETAILS MODAL
+      ====================================================== */}
 
       {selectedOrder && (
 
@@ -366,7 +435,9 @@ const AdminOrders = () => {
 
           <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
 
-            {/* HEADER */}
+            {/* =================================================
+                HEADER
+            ================================================== */}
 
             <div className="flex items-center justify-between">
 
@@ -393,7 +464,9 @@ const AdminOrders = () => {
 
             </div>
 
-            {/* CUSTOMER */}
+            {/* =================================================
+                CUSTOMER
+            ================================================== */}
 
             <div className="mt-6 rounded-xl bg-gray-50 p-5">
 
@@ -401,7 +474,7 @@ const AdminOrders = () => {
                 Customer
               </h3>
 
-              <p className="mt-2">
+              <p className="mt-2 font-semibold">
                 {selectedOrder.user?.name || "N/A"}
               </p>
 
@@ -411,7 +484,9 @@ const AdminOrders = () => {
 
             </div>
 
-            {/* RESTAURANT */}
+            {/* =================================================
+                RESTAURANT
+            ================================================== */}
 
             <div className="mt-4 rounded-xl bg-gray-50 p-5">
 
@@ -419,14 +494,52 @@ const AdminOrders = () => {
                 Restaurant
               </h3>
 
-              <p className="mt-2">
+              <p className="mt-2 font-semibold">
                 {selectedOrder.restaurant?.name ||
+                  "N/A"}
+              </p>
+
+              <p className="text-sm text-gray-600">
+                {selectedOrder.restaurant?.cuisine ||
+                  ""}
+              </p>
+
+            </div>
+
+            {/* =================================================
+                DELIVERY ADDRESS
+            ================================================== */}
+
+            <div className="mt-4 rounded-xl bg-gray-50 p-5">
+
+              <h3 className="font-bold text-gray-800">
+                Delivery Address
+              </h3>
+
+              <p className="mt-2 text-gray-700">
+                {selectedOrder.deliveryAddress?.address ||
+                  "N/A"}
+              </p>
+
+              <p className="text-sm text-gray-600">
+                {selectedOrder.deliveryAddress?.city ||
+                  ""}
+                {selectedOrder.deliveryAddress?.state
+                  ? `, ${selectedOrder.deliveryAddress.state}`
+                  : ""}
+              </p>
+
+              <p className="text-sm text-gray-600">
+                Pincode:{" "}
+                {selectedOrder.deliveryAddress?.pincode ||
                   "N/A"}
               </p>
 
             </div>
 
-            {/* ITEMS */}
+            {/* =================================================
+                ORDER ITEMS
+            ================================================== */}
 
             <div className="mt-4 rounded-xl bg-gray-50 p-5">
 
@@ -447,6 +560,7 @@ const AdminOrders = () => {
                       >
 
                         <div>
+
                           <p className="font-semibold">
                             {item.name ||
                               item.menuItem?.name ||
@@ -457,6 +571,49 @@ const AdminOrders = () => {
                             Quantity:{" "}
                             {item.quantity || 1}
                           </p>
+
+                          {/* EXTRAS */}
+
+                          {item.extras?.length > 0 && (
+
+                            <div className="mt-1">
+
+                              <p className="text-xs font-semibold text-gray-500">
+                                Extras:
+                              </p>
+
+                              {item.extras.map(
+                                (extra, extraIndex) => (
+
+                                  <p
+                                    key={
+                                      extra._id ||
+                                      extraIndex
+                                    }
+                                    className="text-xs text-gray-500"
+                                  >
+                                    {extra.name} - ₹
+                                    {extra.price || 0}
+                                  </p>
+
+                                )
+                              )}
+
+                            </div>
+
+                          )}
+
+                          {/* SPECIAL INSTRUCTIONS */}
+
+                          {item.specialInstructions && (
+
+                            <p className="mt-1 text-xs text-gray-500">
+                              Note:{" "}
+                              {item.specialInstructions}
+                            </p>
+
+                          )}
+
                         </div>
 
                         <p className="font-semibold">
@@ -480,13 +637,21 @@ const AdminOrders = () => {
 
             </div>
 
-            {/* AMOUNT */}
+            {/* =================================================
+                PAYMENT DETAILS
+            ================================================== */}
 
             <div className="mt-4 rounded-xl bg-orange-50 p-5">
 
-              <div className="flex justify-between">
+              <h3 className="font-bold text-gray-800">
+                Payment Details
+              </h3>
 
-                <span className="font-semibold">
+              {/* TOTAL AMOUNT */}
+
+              <div className="mt-4 flex justify-between border-b pb-3">
+
+                <span className="text-gray-600">
                   Total Amount
                 </span>
 
@@ -496,22 +661,112 @@ const AdminOrders = () => {
 
               </div>
 
-              <div className="mt-2 flex justify-between text-sm">
+              {/* PAYMENT METHOD */}
 
-                <span>
+              <div className="mt-3 flex justify-between border-b pb-3">
+
+                <span className="text-gray-600">
+                  Payment Method
+                </span>
+
+                <span className="font-semibold text-gray-800">
+                  {selectedOrder.paymentMethod ||
+                    "N/A"}
+                </span>
+
+              </div>
+
+              {/* PAYMENT STATUS */}
+
+              <div className="mt-3 flex justify-between border-b pb-3">
+
+                <span className="text-gray-600">
                   Payment Status
                 </span>
 
-                <span className="font-semibold">
+                <span
+                  className={`font-semibold ${getPaymentStatusClass(
+                    selectedOrder.paymentStatus
+                  )}`}
+                >
                   {selectedOrder.paymentStatus ||
                     "N/A"}
                 </span>
 
               </div>
 
+              {/* PAYMENT ID */}
+
+              <div className="mt-3">
+
+                <p className="text-sm text-gray-600">
+                  Razorpay Payment ID
+                </p>
+
+                <p className="mt-1 break-all rounded-lg bg-white p-3 font-mono text-xs text-gray-800">
+                  {selectedOrder.paymentId ||
+                    "N/A"}
+                </p>
+
+              </div>
+
+              {/* RAZORPAY ORDER ID */}
+
+              <div className="mt-3">
+
+                <p className="text-sm text-gray-600">
+                  Razorpay Order ID
+                </p>
+
+                <p className="mt-1 break-all rounded-lg bg-white p-3 font-mono text-xs text-gray-800">
+                  {selectedOrder.paymentOrderId ||
+                    "N/A"}
+                </p>
+
+              </div>
+
             </div>
 
-            {/* UPDATE STATUS */}
+            {/* =================================================
+                DELIVERY TYPE
+            ================================================== */}
+
+            <div className="mt-4 rounded-xl bg-gray-50 p-5">
+
+              <h3 className="font-bold text-gray-800">
+                Delivery Information
+              </h3>
+
+              <div className="mt-3 space-y-2 text-sm">
+
+                <p>
+                  <span className="font-semibold">
+                    Delivery Type:
+                  </span>{" "}
+                  {selectedOrder.deliveryType ||
+                    "Immediate"}
+                </p>
+
+                {selectedOrder.scheduledDeliveryTime && (
+
+                  <p>
+                    <span className="font-semibold">
+                      Scheduled Time:
+                    </span>{" "}
+                    {new Date(
+                      selectedOrder.scheduledDeliveryTime
+                    ).toLocaleString()}
+                  </p>
+
+                )}
+
+              </div>
+
+            </div>
+
+            {/* =================================================
+                ORDER STATUS
+            ================================================== */}
 
             <div className="mt-6">
 
@@ -551,7 +806,9 @@ const AdminOrders = () => {
 
             </div>
 
-            {/* BUTTONS */}
+            {/* =================================================
+                BUTTONS
+            ================================================== */}
 
             <div className="mt-5 flex gap-3">
 

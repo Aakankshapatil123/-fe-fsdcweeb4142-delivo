@@ -32,3 +32,15 @@ export const markNotificationAsRead = async (notificationId) => {
 
   return response.data;
 };
+
+// =========================================================
+// GET MY PAYMENT HISTORY
+// =========================================================
+
+export const getMyPaymentHistory = async () => {
+  const response = await intance.get(
+    "/user/payment/history"
+  );
+
+  return response.data;
+};

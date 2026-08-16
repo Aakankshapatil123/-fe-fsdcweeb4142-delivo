@@ -8,8 +8,8 @@ import AuthInitializer from './components/AuthInitializer.jsx'
 
 createRoot(document.getElementById('root')).render(
    <Provider store={store}>
-    <AuthInitializer>
-          <App />
-    </AuthInitializer>
+     <AuthInitializer>
+      <App />
+     </AuthInitializer>
    </Provider>
 )

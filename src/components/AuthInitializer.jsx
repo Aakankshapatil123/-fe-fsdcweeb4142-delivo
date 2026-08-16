@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import { getCurrentUser } from "../services/authServices";
-import { logout, setUser } from "../redux/authSlice";
+import { logout, setUser, setLoading } from "../redux/authSlice";
 
 const AuthInitializer = ({ children }) => {
   const dispatch = useDispatch();
@@ -10,25 +10,31 @@ const AuthInitializer = ({ children }) => {
   useEffect(() => {
     const checkUser = async () => {
       try {
+        // Auth check
+        dispatch(setLoading(true));
+
         const response = await getCurrentUser();
 
         console.log("CURRENT USER:", response);
 
-        const user = response;
+        const user =
+          response?.user || response?.data?.user || response?.data || response;
 
         if (user) {
           dispatch(setUser(user));
-        }else {
-          console.log("NO USER FOUND");
-
+        } else {
           dispatch(logout());
         }
       } catch (error) {
-        console.log(
-          "AUTH CHECK:",
-          error.response?.data?.message || "User not logged in"
-        );
+        console.log("AUTH ERROR:", error);
+        console.log("STATUS:", error.response?.status);
+        console.log("DATA:", error.response?.data);
+        console.log("URL:", error.config?.url);
+
         dispatch(logout());
+      } finally {
+        // Auth check पूर्ण
+        dispatch(setLoading(false));
       }
     };
 
