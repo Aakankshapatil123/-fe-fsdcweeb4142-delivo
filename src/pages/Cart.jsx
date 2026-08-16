@@ -150,7 +150,7 @@ const Cart = () => {
                       {item.image ? (
 
                         <img
-                          src={`http://localhost:3001${item.image}`}
+                          src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${item.image}`}
                           alt={item.name}
                           className="h-full w-full object-cover"
                         />

@@ -268,7 +268,7 @@ const Favorites = () => {
 
                         {restaurant.image ? (
                           <img
-                            src={`http://localhost:3001${restaurant.image}`}
+                            src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
                             alt={restaurant.name}
                             className="h-full w-full object-cover"
                           />
@@ -400,7 +400,7 @@ const Favorites = () => {
 
                         {menu.image ? (
                           <img
-                            src={`http://localhost:3001${menu.image}`}
+                            src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${menu.image}`}
                             alt={menu.name}
                             className="h-full w-full object-cover"
                           />

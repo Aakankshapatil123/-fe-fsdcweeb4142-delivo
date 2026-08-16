@@ -123,7 +123,7 @@ const AdminUserDetails = () => {
 
             {user.profilePicture ? (
               <img
-                src={`http://localhost:3001${user.profilePicture}`}
+                src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${user.profilePicture}`}
                 alt={user.name}
                 className="mx-auto h-28 w-28 rounded-full border-4 border-white object-cover shadow-md"
               />

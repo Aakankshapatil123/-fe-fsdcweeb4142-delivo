@@ -87,7 +87,7 @@ const MenuCard = ({ menu, onCustomize }) => {
       <div className="relative h-48 w-full overflow-hidden bg-gray-200">
         {menu.image ? (
           <img
-            src={`http://localhost:3001${menu.image}`}
+             src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${menu.image}`}
             alt={menu.name}
             className="h-full w-full object-cover transition duration-300 hover:scale-105"
           />

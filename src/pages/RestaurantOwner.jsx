@@ -201,7 +201,7 @@ const RestaurantOwner = () => {
 
                 {restaurant.image ? (
                   <img
-                    src={`http://localhost:3001${restaurant.image}`}
+                    src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
                     alt={restaurant.name || "Restaurant"}
                     className="h-full w-full object-cover"
                   />

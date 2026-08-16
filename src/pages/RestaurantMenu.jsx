@@ -728,7 +728,7 @@ const RestaurantMenu = () => {
                 {menu.image ? (
 
                   <img
-                    src={`http://localhost:3001${menu.image}`}
+                    src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${menu.image}`}
                     alt={menu.name}
                     className="h-52 w-full object-cover"
                     onError={(event) => {
