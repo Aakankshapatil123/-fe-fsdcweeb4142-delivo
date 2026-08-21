@@ -153,3 +153,34 @@ Create a food delivery platform with features for restaurant listings, menu brow
 - Restaurant and Menu Management
 - Admin Dashboard
 - User, Restaurant, Order, and Review Management
+
+
+
+
+## Demo Login Credentials
+
+| Role | Email | Password |
+|------|-------|----------|
+| User | `piyush@gmail.com` | `123456` |
+| Restaurant Owner | `yash@gmail.com` | `123456` |
+| Admin | `aakanksha@gmail.com` | `123456` |
+
+## How to Test
+
+### Restaurant Owner
+1. Open the deployed frontend application.
+2. Go to the Login page.
+3. Use the Restaurant Owner credentials above.
+4. After login, open the Restaurant Owner dashboard.
+5. You can add, edit, update, and delete menu items.
+
+### Admin
+1. Open the Login page.
+2. Use the Admin credentials above.
+3. Open the Admin Dashboard.
+4. Test the available admin features.
+
+### User
+1. Open the Login page.
+2. Use the User credentials above.
+3. Browse restaurants, view menus, place orders, track orders, and submit reviews.

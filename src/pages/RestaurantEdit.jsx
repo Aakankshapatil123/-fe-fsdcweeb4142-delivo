@@ -45,7 +45,7 @@ const RestaurantEdit = () => {
         const restaurants = response?.result || [];
 
         const foundRestaurant = restaurants.find(
-          (item) => String(item._id) === String(id)
+          (item) => String(item._id) === String(id),
         );
 
         if (!foundRestaurant) {
@@ -54,10 +54,7 @@ const RestaurantEdit = () => {
           return;
         }
 
-        console.log(
-          "FOUND RESTAURANT:",
-          foundRestaurant
-        );
+        console.log("FOUND RESTAURANT:", foundRestaurant);
 
         setRestaurant(foundRestaurant);
 
@@ -66,37 +63,28 @@ const RestaurantEdit = () => {
           description: foundRestaurant.description || "",
           cuisine: foundRestaurant.cuisine || "",
 
-          address:
-            foundRestaurant.location?.address || "",
+          address: foundRestaurant.location?.address || "",
 
-          city:
-            foundRestaurant.location?.city || "",
+          city: foundRestaurant.location?.city || "",
 
-          state:
-            foundRestaurant.location?.state || "",
+          state: foundRestaurant.location?.state || "",
 
-          pincode:
-            foundRestaurant.location?.pincode || "",
+          pincode: foundRestaurant.location?.pincode || "",
 
-          openingHours:
-            foundRestaurant.openingHours || "",
+          openingHours: foundRestaurant.openingHours || "",
 
-          priceRange:
-            foundRestaurant.priceRange || "₹",
+          priceRange: foundRestaurant.priceRange || "₹",
 
-          isOpen:
-            foundRestaurant.isOpen ?? true,
+          isOpen: foundRestaurant.isOpen ?? true,
         });
       } catch (error) {
         console.error(
           "GET RESTAURANT ERROR:",
-          error.response?.data?.message ||
-            error.message
+          error.response?.data?.message || error.message,
         );
 
         toast.error(
-          error.response?.data?.message ||
-            "Failed to load restaurant"
+          error.response?.data?.message || "Failed to load restaurant",
         );
       } finally {
         setLoading(false);
@@ -199,20 +187,11 @@ const RestaurantEdit = () => {
       // RESTAURANT DETAILS
       // -------------------------------------------------
 
-      data.append(
-        "name",
-        formData.name.trim()
-      );
+      data.append("name", formData.name.trim());
 
-      data.append(
-        "description",
-        formData.description.trim()
-      );
+      data.append("description", formData.description.trim());
 
-      data.append(
-        "cuisine",
-        formData.cuisine.trim()
-      );
+      data.append("cuisine", formData.cuisine.trim());
 
       // -------------------------------------------------
       // LOCATION
@@ -226,53 +205,33 @@ const RestaurantEdit = () => {
         pincode: formData.pincode.trim(),
       };
 
-      console.log(
-        "LOCATION SENT:",
-        locationData
-      );
+      console.log("LOCATION SENT:", locationData);
 
-      data.append(
-        "location",
-        JSON.stringify(locationData)
-      );
+      data.append("location", JSON.stringify(locationData));
 
       // -------------------------------------------------
       // OTHER DETAILS
       // -------------------------------------------------
 
-      data.append(
-        "openingHours",
-        formData.openingHours.trim()
-      );
+      data.append("openingHours", formData.openingHours.trim());
 
-      data.append(
-        "priceRange",
-        formData.priceRange
-      );
+      data.append("priceRange", formData.priceRange);
 
-      data.append(
-        "isOpen",
-        String(formData.isOpen)
-      );
+      data.append("isOpen", String(formData.isOpen));
 
       // -------------------------------------------------
       // IMAGE
       // -------------------------------------------------
 
       if (image) {
-        data.append(
-          "restaurantImage",
-          image
-        );
+        data.append("restaurantImage", image);
       }
 
       // -------------------------------------------------
       // DEBUG FORMDATA
       // -------------------------------------------------
 
-      console.log(
-        "UPDATE RESTAURANT DATA:"
-      );
+      console.log("UPDATE RESTAURANT DATA:");
 
       for (const [key, value] of data.entries()) {
         console.log(key, value);
@@ -282,38 +241,25 @@ const RestaurantEdit = () => {
       // API CALL
       // -------------------------------------------------
 
-      const response =
-        await updateRestaurantProfile(
-          id,
-          data
-        );
+      const response = await updateRestaurantProfile(id, data);
 
-      console.log(
-        "UPDATED RESTAURANT:",
-        response
-      );
+      console.log("UPDATED RESTAURANT:", response);
 
-      toast.success(
-        response?.message ||
-          "Restaurant updated successfully"
-      );
+      toast.success(response?.message || "Restaurant updated successfully");
 
       // -------------------------------------------------
       // BACK
       // -------------------------------------------------
 
       navigate("/restaurant/owner");
-
     } catch (error) {
       console.error(
         "UPDATE RESTAURANT ERROR:",
-        error.response?.data?.message ||
-          error.message
+        error.response?.data?.message || error.message,
       );
 
       toast.error(
-        error.response?.data?.message ||
-          "Failed to update restaurant"
+        error.response?.data?.message || "Failed to update restaurant",
       );
     } finally {
       setSaving(false);
@@ -328,13 +274,11 @@ const RestaurantEdit = () => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-orange-500"></div>
 
           <p className="mt-4 font-semibold text-gray-600">
             Loading restaurant...
           </p>
-
         </div>
       </div>
     );
@@ -346,31 +290,23 @@ const RestaurantEdit = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 px-5 py-10 md:px-10">
-
       <div className="mx-auto max-w-4xl">
-
         {/* HEADER */}
 
         <div className="mb-8">
-
           <button
             type="button"
-            onClick={() =>
-              navigate("/restaurant/owner")
-            }
+            onClick={() => navigate("/restaurant/owner")}
             className="mb-4 text-sm font-semibold text-orange-500 hover:text-orange-600"
           >
             ← Back to My Restaurant
           </button>
 
-          <h1 className="text-3xl font-bold text-gray-900">
-            Edit Restaurant
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">Edit Restaurant</h1>
 
           <p className="mt-2 text-gray-600">
             Update your restaurant information
           </p>
-
         </div>
 
         {/* FORM */}
@@ -379,11 +315,9 @@ const RestaurantEdit = () => {
           onSubmit={handleSubmit}
           className="rounded-2xl bg-white p-6 shadow-md md:p-8"
         >
-
           {/* RESTAURANT NAME */}
 
           <div className="mb-6">
-
             <label className="mb-2 block font-semibold text-gray-700">
               Restaurant Name
             </label>
@@ -396,13 +330,11 @@ const RestaurantEdit = () => {
               placeholder="Enter restaurant name"
               className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
             />
-
           </div>
 
           {/* DESCRIPTION */}
 
           <div className="mb-6">
-
             <label className="mb-2 block font-semibold text-gray-700">
               Description
             </label>
@@ -415,13 +347,11 @@ const RestaurantEdit = () => {
               placeholder="Enter restaurant description"
               className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
             />
-
           </div>
 
           {/* CUISINE */}
 
           <div className="mb-6">
-
             <label className="mb-2 block font-semibold text-gray-700">
               Cuisine
             </label>
@@ -434,23 +364,17 @@ const RestaurantEdit = () => {
               placeholder="Example: Indian, Chinese, Italian"
               className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
             />
-
           </div>
 
           {/* LOCATION */}
 
           <div className="mb-6">
-
-            <h2 className="mb-4 text-xl font-bold text-gray-800">
-              Location
-            </h2>
+            <h2 className="mb-4 text-xl font-bold text-gray-800">Location</h2>
 
             <div className="space-y-4">
-
               {/* ADDRESS */}
 
               <div>
-
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Address
                 </label>
@@ -463,15 +387,12 @@ const RestaurantEdit = () => {
                   placeholder="Enter full address"
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-orange-500"
                 />
-
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
-
                 {/* CITY */}
 
                 <div>
-
                   <label className="mb-2 block text-sm font-semibold text-gray-700">
                     City
                   </label>
@@ -484,13 +405,11 @@ const RestaurantEdit = () => {
                     placeholder="Enter city"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-orange-500"
                   />
-
                 </div>
 
                 {/* STATE */}
 
                 <div>
-
                   <label className="mb-2 block text-sm font-semibold text-gray-700">
                     State
                   </label>
@@ -503,15 +422,12 @@ const RestaurantEdit = () => {
                     placeholder="Enter state"
                     className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-orange-500"
                   />
-
                 </div>
-
               </div>
 
               {/* PINCODE */}
 
               <div>
-
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Pincode
                 </label>
@@ -525,17 +441,13 @@ const RestaurantEdit = () => {
                   placeholder="Enter 6 digit pincode"
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-orange-500"
                 />
-
               </div>
-
             </div>
-
           </div>
 
           {/* OPENING HOURS */}
 
           <div className="mb-6">
-
             <label className="mb-2 block font-semibold text-gray-700">
               Opening Hours
             </label>
@@ -548,13 +460,11 @@ const RestaurantEdit = () => {
               placeholder="Example: 10:00 AM - 11:00 PM"
               className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-orange-500"
             />
-
           </div>
 
           {/* PRICE RANGE */}
 
           <div className="mb-6">
-
             <label className="mb-2 block font-semibold text-gray-700">
               Price Range
             </label>
@@ -565,79 +475,62 @@ const RestaurantEdit = () => {
               onChange={handleChange}
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-orange-500"
             >
-
               <option value="₹">₹</option>
               <option value="₹₹">₹₹</option>
               <option value="₹₹₹">₹₹₹</option>
               <option value="₹₹₹₹">₹₹₹₹</option>
-
             </select>
-
           </div>
 
           {/* RESTAURANT STATUS */}
 
           <div className="mb-6">
-
             <label className="mb-2 block font-semibold text-gray-700">
               Restaurant Status
             </label>
 
             <select
               name="isOpen"
-              value={
-                formData.isOpen
-                  ? "true"
-                  : "false"
-              }
+              value={formData.isOpen ? "true" : "false"}
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  isOpen:
-                    e.target.value ===
-                    "true",
+                  isOpen: e.target.value === "true",
                 }))
               }
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 outline-none focus:border-orange-500"
             >
+              <option value="true">Open</option>
 
-              <option value="true">
-                Open
-              </option>
-
-              <option value="false">
-                Closed
-              </option>
-
+              <option value="false">Closed</option>
             </select>
-
           </div>
 
           {/* CURRENT IMAGE */}
 
           {restaurant?.image && (
             <div className="mb-6">
-
               <label className="mb-2 block font-semibold text-gray-700">
                 Current Restaurant Image
               </label>
 
               <img
-              src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
-                alt={
-                  restaurant.name ||
-                  "Restaurant"
+                // src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
+                // src={restaurant.image}
+                src={
+                  restaurant.image?.startsWith("http")
+                    ? restaurant.image
+                    : `${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`
                 }
+                alt={restaurant.name || "Restaurant"}
                 className="h-48 w-full rounded-xl object-cover md:w-80"
               />
-
             </div>
           )}
 
           {/* NEW IMAGE */}
 
           <div className="mb-8">
-
             <label className="mb-2 block font-semibold text-gray-700">
               Change Restaurant Image
             </label>
@@ -654,18 +547,14 @@ const RestaurantEdit = () => {
                 Selected: {image.name}
               </p>
             )}
-
           </div>
 
           {/* BUTTONS */}
 
           <div className="flex flex-col gap-3 sm:flex-row">
-
             <button
               type="button"
-              onClick={() =>
-                navigate("/restaurant/owner")
-              }
+              onClick={() => navigate("/restaurant/owner")}
               className="w-full rounded-xl border border-gray-300 px-5 py-3 font-semibold text-gray-700 hover:bg-gray-100"
             >
               Cancel
@@ -676,17 +565,11 @@ const RestaurantEdit = () => {
               disabled={saving}
               className="w-full rounded-xl bg-orange-500 px-5 py-3 font-semibold text-white hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving
-                ? "Updating..."
-                : "Update Restaurant"}
+              {saving ? "Updating..." : "Update Restaurant"}
             </button>
-
           </div>
-
         </form>
-
       </div>
-
     </div>
   );
 };

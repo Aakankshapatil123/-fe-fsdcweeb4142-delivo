@@ -13,15 +13,12 @@ const RestaurantCard = ({ restaurant }) => {
 
   // ================= AUTH =================
 
-  const { isAuthenticated } = useSelector(
-    (state) => state.auth
-  );
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
   // ================= FAVORITE STATE =================
 
   const [isFavorite, setIsFavorite] = useState(false);
-  const [favoriteLoading, setFavoriteLoading] =
-    useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
 
   // ================= CHECK FAVORITE =================
 
@@ -33,19 +30,13 @@ const RestaurantCard = ({ restaurant }) => {
       }
 
       try {
-        const response =
-          await checkRestaurantFavorite(
-            restaurant._id
-          );
+        const response = await checkRestaurantFavorite(restaurant._id);
 
-        setIsFavorite(
-          response.isFavorite || false
-        );
+        setIsFavorite(response.isFavorite || false);
       } catch (error) {
         console.log(
           "CHECK FAVORITE ERROR:",
-          error.response?.data?.message ||
-            error.message
+          error.response?.data?.message || error.message,
         );
 
         setIsFavorite(false);
@@ -72,23 +63,18 @@ const RestaurantCard = ({ restaurant }) => {
       setFavoriteLoading(true);
 
       if (isFavorite) {
-        await removeRestaurantFavorite(
-          restaurant._id
-        );
+        await removeRestaurantFavorite(restaurant._id);
 
         setIsFavorite(false);
       } else {
-        await addRestaurantFavorite(
-          restaurant._id
-        );
+        await addRestaurantFavorite(restaurant._id);
 
         setIsFavorite(true);
       }
     } catch (error) {
       console.log(
         "FAVORITE ERROR:",
-        error.response?.data?.message ||
-          error.message
+        error.response?.data?.message || error.message,
       );
     } finally {
       setFavoriteLoading(false);
@@ -97,14 +83,18 @@ const RestaurantCard = ({ restaurant }) => {
 
   return (
     <div className="overflow-hidden rounded-2xl bg-white shadow-md transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-
       {/* ================= IMAGE ================= */}
 
       <div className="relative h-48 w-full overflow-hidden bg-gray-200">
-
         {restaurant.image ? (
           <img
-            src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
+            // src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
+            // src={restaurant.image}
+            src={
+              restaurant.image?.startsWith("http")
+                ? restaurant.image
+                : `${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`
+            }
             alt={restaurant.name}
             className="h-full w-full object-cover transition duration-300 hover:scale-105"
           />
@@ -120,11 +110,7 @@ const RestaurantCard = ({ restaurant }) => {
           type="button"
           onClick={handleFavorite}
           disabled={favoriteLoading}
-          aria-label={
-            isFavorite
-              ? "Remove from favorites"
-              : "Add to favorites"
-          }
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
           className={`absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full text-2xl shadow-md transition ${
             favoriteLoading
               ? "cursor-not-allowed opacity-50"
@@ -133,25 +119,19 @@ const RestaurantCard = ({ restaurant }) => {
         >
           {isFavorite ? "❤️" : "🤍"}
         </button>
-
       </div>
 
       {/* ================= DETAILS ================= */}
 
       <div className="p-5">
-
         {/* Name + Rating */}
 
         <div className="flex items-start justify-between gap-3">
-
-          <h2 className="text-xl font-bold text-gray-900">
-            {restaurant.name}
-          </h2>
+          <h2 className="text-xl font-bold text-gray-900">{restaurant.name}</h2>
 
           <span className="whitespace-nowrap rounded-md bg-green-100 px-2 py-1 text-sm font-semibold text-green-700">
             ★ {restaurant.rating ?? 0}
           </span>
-
         </div>
 
         {/* Cuisine */}
@@ -164,47 +144,35 @@ const RestaurantCard = ({ restaurant }) => {
 
         <p className="mt-2 text-sm text-gray-600">
           📍 {restaurant.location?.address || ""}
-
-          {restaurant.location?.city
-            ? `, ${restaurant.location.city}`
-            : ""}
+          {restaurant.location?.city ? `, ${restaurant.location.city}` : ""}
         </p>
 
         {/* Opening Hours */}
 
         <p className="mt-2 text-sm text-gray-500">
-          🕒{" "}
-          {restaurant.openingHours ||
-            "Not available"}
+          🕒 {restaurant.openingHours || "Not available"}
         </p>
 
         {/* Description */}
 
         <p className="mt-2 line-clamp-2 text-sm text-gray-600">
-          {restaurant.description ||
-            "No description available."}
+          {restaurant.description || "No description available."}
         </p>
 
         {/* Price + Open Status */}
 
         <div className="mt-4 flex items-center justify-between">
-
           <span className="font-semibold text-gray-700">
             {restaurant.priceRange || "₹"}
           </span>
 
           <span
             className={`text-sm font-semibold ${
-              restaurant.isOpen
-                ? "text-green-600"
-                : "text-red-500"
+              restaurant.isOpen ? "text-green-600" : "text-red-500"
             }`}
           >
-            {restaurant.isOpen
-              ? "Open"
-              : "Closed"}
+            {restaurant.isOpen ? "Open" : "Closed"}
           </span>
-
         </div>
 
         {/* View Details */}
@@ -215,9 +183,7 @@ const RestaurantCard = ({ restaurant }) => {
         >
           View Details
         </Link>
-
       </div>
-
     </div>
   );
 };

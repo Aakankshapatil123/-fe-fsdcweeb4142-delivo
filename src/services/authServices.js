@@ -5,6 +5,7 @@ import intance from "../intances/intance";
 export const registerUser = async (userData) => {
   const response = await intance.post(
     "/auth/register",
+    // "/api/v1/auth/register",
     userData
   );
 
@@ -15,6 +16,7 @@ export const registerUser = async (userData) => {
 export const loginUser = async (userData) => {
   const response = await intance.post(
     "/auth/login",
+    // "/api/v1/auth/login",
     userData
   );
 
@@ -26,6 +28,7 @@ export const loginUser = async (userData) => {
 export const getCurrentUser = async () => {
   const response = await intance.get(
     "/auth/me"
+    // "/api/v1/auth/me"
   );
 
   return response.data;
@@ -35,6 +38,7 @@ export const getCurrentUser = async () => {
 export const logoutUser = async () => {
   const response = await intance.post(
     "/auth/logout"
+    //  "/api/v1/auth/logout"
   );
 
   return response.data;

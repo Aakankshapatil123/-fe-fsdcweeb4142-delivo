@@ -24,12 +24,11 @@ const AdminUserDetails = () => {
       } catch (error) {
         console.log(
           "GET USER DETAILS ERROR:",
-          error.response?.data?.message || error.message
+          error.response?.data?.message || error.message,
         );
 
         setError(
-          error.response?.data?.message ||
-            "Failed to load user details"
+          error.response?.data?.message || "Failed to load user details",
         );
       } finally {
         setLoading(false);
@@ -57,9 +56,7 @@ const AdminUserDetails = () => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <p className="font-semibold text-red-500">
-            {error}
-          </p>
+          <p className="font-semibold text-red-500">{error}</p>
 
           <Link
             to="/admin/users"
@@ -77,9 +74,7 @@ const AdminUserDetails = () => {
   if (!user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <p className="text-lg font-semibold text-gray-600">
-          User not found
-        </p>
+        <p className="text-lg font-semibold text-gray-600">User not found</p>
       </div>
     );
   }
@@ -87,11 +82,9 @@ const AdminUserDetails = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10 md:px-10">
       <div className="mx-auto max-w-5xl">
-
         {/* ================= HEADER ================= */}
 
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-
           <div>
             <h1 className="text-3xl font-bold text-gray-800 md:text-4xl">
               User Details
@@ -108,22 +101,25 @@ const AdminUserDetails = () => {
           >
             ← Back to Users
           </Link>
-
         </div>
 
         {/* ================= USER CARD ================= */}
 
         <div className="overflow-hidden rounded-2xl bg-white shadow-md">
-
           {/* ================= PROFILE HEADER ================= */}
 
           <div className="bg-orange-500 p-8 text-center">
-
             {/* PROFILE IMAGE */}
 
             {user.profilePicture ? (
               <img
-                src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${user.profilePicture}`}
+                // src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${user.profilePicture}`}
+                // src={user.profilePicture}
+                src={
+                  user.profilePicture?.startsWith("http")
+                    ? user.profilePicture
+                    : `${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${user.profilePicture}`
+                }
                 alt={user.name}
                 className="mx-auto h-28 w-28 rounded-full border-4 border-white object-cover shadow-md"
               />
@@ -135,34 +131,27 @@ const AdminUserDetails = () => {
 
             {/* NAME */}
 
-            <h2 className="mt-4 text-2xl font-bold text-white">
-              {user.name}
-            </h2>
+            <h2 className="mt-4 text-2xl font-bold text-white">{user.name}</h2>
 
             {/* ROLE */}
 
             <span className="mt-2 inline-block rounded-full bg-white px-4 py-1 text-sm font-semibold text-orange-600">
               {user.role || "user"}
             </span>
-
           </div>
 
           {/* ================= USER INFORMATION ================= */}
 
           <div className="p-6 md:p-8">
-
             <h3 className="text-xl font-bold text-gray-800">
               Personal Information
             </h3>
 
             <div className="mt-6 grid gap-5 md:grid-cols-2">
-
               {/* EMAIL */}
 
               <div className="rounded-xl bg-gray-50 p-5">
-                <p className="text-sm text-gray-500">
-                  Email
-                </p>
+                <p className="text-sm text-gray-500">Email</p>
 
                 <p className="mt-1 break-all font-semibold text-gray-800">
                   {user.email || "N/A"}
@@ -172,9 +161,7 @@ const AdminUserDetails = () => {
               {/* PHONE */}
 
               <div className="rounded-xl bg-gray-50 p-5">
-                <p className="text-sm text-gray-500">
-                  Phone
-                </p>
+                <p className="text-sm text-gray-500">Phone</p>
 
                 <p className="mt-1 font-semibold text-gray-800">
                   {user.phone || "N/A"}
@@ -184,76 +171,54 @@ const AdminUserDetails = () => {
               {/* ROLE */}
 
               <div className="rounded-xl bg-gray-50 p-5">
-                <p className="text-sm text-gray-500">
-                  Role
-                </p>
+                <p className="text-sm text-gray-500">Role</p>
 
                 <p className="mt-1 font-semibold capitalize text-gray-800">
                   {user.role || "user"}
                 </p>
               </div>
 
-             
               {/* NOTIFICATION */}
 
               <div className="rounded-xl bg-gray-50 p-5">
-                <p className="text-sm text-gray-500">
-                  Notifications
-                </p>
+                <p className="text-sm text-gray-500">Notifications</p>
 
                 <p
                   className={`mt-1 font-semibold ${
-                    user.notificationEnabled
-                      ? "text-green-600"
-                      : "text-red-500"
+                    user.notificationEnabled ? "text-green-600" : "text-red-500"
                   }`}
                 >
-                  {user.notificationEnabled
-                    ? "Enabled"
-                    : "Disabled"}
+                  {user.notificationEnabled ? "Enabled" : "Disabled"}
                 </p>
               </div>
 
               {/* CREATED DATE */}
 
               <div className="rounded-xl bg-gray-50 p-5">
-                <p className="text-sm text-gray-500">
-                  Created At
-                </p>
+                <p className="text-sm text-gray-500">Created At</p>
 
                 <p className="mt-1 font-semibold text-gray-800">
                   {user.createdAt
-                    ? new Date(
-                        user.createdAt
-                      ).toLocaleDateString()
+                    ? new Date(user.createdAt).toLocaleDateString()
                     : "N/A"}
                 </p>
               </div>
-
             </div>
 
             {/* ================= LOCATION ================= */}
 
-            <h3 className="mt-8 text-xl font-bold text-gray-800">
-              Location
-            </h3>
+            <h3 className="mt-8 text-xl font-bold text-gray-800">Location</h3>
 
             <div className="mt-4 rounded-xl bg-gray-50 p-5">
-
               <p className="font-semibold text-gray-800">
                 {user.location?.address || "Address not available"}
               </p>
 
               <p className="mt-1 text-gray-600">
                 {user.location?.city || ""}
-                {user.location?.state
-                  ? `, ${user.location.state}`
-                  : ""}
-                {user.location?.pincode
-                  ? ` - ${user.location.pincode}`
-                  : ""}
+                {user.location?.state ? `, ${user.location.state}` : ""}
+                {user.location?.pincode ? ` - ${user.location.pincode}` : ""}
               </p>
-
             </div>
 
             {/* ================= USER ID ================= */}
@@ -263,20 +228,14 @@ const AdminUserDetails = () => {
             </h3>
 
             <div className="mt-4 rounded-xl bg-gray-50 p-5">
-
-              <p className="text-sm text-gray-500">
-                User ID
-              </p>
+              <p className="text-sm text-gray-500">User ID</p>
 
               <p className="mt-1 break-all font-mono text-sm text-gray-700">
                 {user._id}
               </p>
-
             </div>
-
           </div>
         </div>
-
       </div>
     </div>
   );

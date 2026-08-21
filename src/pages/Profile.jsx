@@ -13,15 +13,9 @@ import {
   getMyPaymentHistory,
 } from "../services/userProfileServices";
 
-// =========================================================
-// API BASE URL
-// =========================================================
 
 const API_URL = import.meta.env.VITE_API_URL.replace("/api/v1", "");
 
-// =========================================================
-// PROFILE COMPONENT
-// =========================================================
 
 const Profile = () => {
   const dispatch = useDispatch();

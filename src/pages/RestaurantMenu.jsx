@@ -57,7 +57,7 @@ const RestaurantMenu = () => {
     } catch (error) {
       console.error(
         "GET MENU ERROR:",
-        error.response?.data?.message || error.message
+        error.response?.data?.message || error.message,
       );
 
       setMenus([]);
@@ -79,13 +79,7 @@ const RestaurantMenu = () => {
   // =====================================================
 
   const handleChange = (event) => {
-    const {
-      name,
-      value,
-      type,
-      checked,
-      files,
-    } = event.target;
+    const { name, value, type, checked, files } = event.target;
 
     // File
     if (type === "file") {
@@ -164,16 +158,14 @@ const RestaurantMenu = () => {
 
       price: menu.price ?? "",
 
-      isAvailable:
-        menu.isAvailable ?? true,
+      isAvailable: menu.isAvailable ?? true,
 
       extras: Array.isArray(menu.extras)
         ? JSON.stringify(menu.extras)
         : menu.extras || "",
 
       nutrition:
-        menu.nutrition &&
-        typeof menu.nutrition === "object"
+        menu.nutrition && typeof menu.nutrition === "object"
           ? JSON.stringify(menu.nutrition)
           : menu.nutrition || "",
 
@@ -226,53 +218,29 @@ const RestaurantMenu = () => {
       // Basic fields
       data.append("name", formData.name.trim());
 
-      data.append(
-        "description",
-        formData.description.trim()
-      );
+      data.append("description", formData.description.trim());
 
-      data.append(
-        "category",
-        formData.category.trim()
-      );
+      data.append("category", formData.category.trim());
 
-      data.append(
-        "foodType",
-        formData.foodType
-      );
+      data.append("foodType", formData.foodType);
 
-      data.append(
-        "price",
-        formData.price
-      );
+      data.append("price", formData.price);
 
-      data.append(
-        "isAvailable",
-        String(formData.isAvailable)
-      );
+      data.append("isAvailable", String(formData.isAvailable));
 
       // Extras
       if (formData.extras.trim()) {
-        data.append(
-          "extras",
-          formData.extras.trim()
-        );
+        data.append("extras", formData.extras.trim());
       }
 
       // Nutrition
       if (formData.nutrition.trim()) {
-        data.append(
-          "nutrition",
-          formData.nutrition.trim()
-        );
+        data.append("nutrition", formData.nutrition.trim());
       }
 
       // Image
       if (formData.image) {
-        data.append(
-          "menuImage",
-          formData.image
-        );
+        data.append("menuImage", formData.image);
       }
 
       // =================================================
@@ -280,15 +248,9 @@ const RestaurantMenu = () => {
       // =================================================
 
       if (editingMenu) {
-        const response = await updateMenu(
-          editingMenu._id,
-          data
-        );
+        const response = await updateMenu(editingMenu._id, data);
 
-        console.log(
-          "UPDATE MENU RESPONSE:",
-          response
-        );
+        console.log("UPDATE MENU RESPONSE:", response);
 
         alert("Menu updated successfully");
       }
@@ -296,14 +258,10 @@ const RestaurantMenu = () => {
       // =================================================
       // CREATE MENU
       // =================================================
-
       else {
         const response = await createMenu(data);
 
-        console.log(
-          "CREATE MENU RESPONSE:",
-          response
-        );
+        console.log("CREATE MENU RESPONSE:", response);
 
         alert("Menu created successfully");
       }
@@ -314,14 +272,10 @@ const RestaurantMenu = () => {
     } catch (error) {
       console.error(
         "MENU SAVE ERROR:",
-        error.response?.data?.message ||
-          error.message
+        error.response?.data?.message || error.message,
       );
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to save menu"
-      );
+      alert(error.response?.data?.message || "Failed to save menu");
     } finally {
       setSaving(false);
     }
@@ -333,7 +287,7 @@ const RestaurantMenu = () => {
 
   const handleDelete = async (menuId) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this menu?"
+      "Are you sure you want to delete this menu?",
     );
 
     if (!confirmDelete) {
@@ -349,14 +303,10 @@ const RestaurantMenu = () => {
     } catch (error) {
       console.error(
         "DELETE MENU ERROR:",
-        error.response?.data?.message ||
-          error.message
+        error.response?.data?.message || error.message,
       );
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to delete menu"
-      );
+      alert(error.response?.data?.message || "Failed to delete menu");
     }
   };
 
@@ -367,9 +317,7 @@ const RestaurantMenu = () => {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <p className="text-lg font-semibold text-gray-600">
-          Loading menus...
-        </p>
+        <p className="text-lg font-semibold text-gray-600">Loading menus...</p>
       </div>
     );
   }
@@ -381,13 +329,11 @@ const RestaurantMenu = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 md:px-8">
       <div className="mx-auto max-w-7xl">
-
         {/* =================================================
             HEADER
         ================================================= */}
 
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-
           <div>
             <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
               Menu Management
@@ -413,16 +359,12 @@ const RestaurantMenu = () => {
 
         {showForm && (
           <div className="mt-8 rounded-2xl bg-white p-6 shadow-md">
-
             {/* FORM HEADER */}
 
             <div className="flex items-center justify-between">
-
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
-                  {editingMenu
-                    ? "Edit Menu"
-                    : "Add New Menu"}
+                  {editingMenu ? "Edit Menu" : "Add New Menu"}
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-500">
@@ -437,7 +379,6 @@ const RestaurantMenu = () => {
               >
                 ✕
               </button>
-
             </div>
 
             {/* =================================================
@@ -448,7 +389,6 @@ const RestaurantMenu = () => {
               onSubmit={handleSubmit}
               className="mt-6 grid gap-5 md:grid-cols-2"
             >
-
               {/* NAME */}
 
               <div>
@@ -500,13 +440,9 @@ const RestaurantMenu = () => {
                   onChange={handleChange}
                   className="w-full rounded-lg border border-gray-300 bg-white p-3 outline-none focus:border-green-500"
                 >
-                  <option value="veg">
-                    Veg
-                  </option>
+                  <option value="veg">Veg</option>
 
-                  <option value="non-veg">
-                    Non-Veg
-                  </option>
+                  <option value="non-veg">Non-Veg</option>
                 </select>
               </div>
 
@@ -554,7 +490,6 @@ const RestaurantMenu = () => {
               {/* DESCRIPTION */}
 
               <div className="md:col-span-2">
-
                 <label className="mb-2 block font-semibold text-gray-700">
                   Description
                 </label>
@@ -567,13 +502,11 @@ const RestaurantMenu = () => {
                   rows="4"
                   className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:border-green-500"
                 />
-
               </div>
 
               {/* EXTRAS */}
 
               <div>
-
                 <label className="mb-2 block font-semibold text-gray-700">
                   Extras
                 </label>
@@ -590,13 +523,11 @@ const RestaurantMenu = () => {
                 <p className="mt-1 text-xs text-gray-500">
                   Example: [{"{"}"name":"Extra Cheese","price":30{"}"}]
                 </p>
-
               </div>
 
               {/* NUTRITION */}
 
               <div>
-
                 <label className="mb-2 block font-semibold text-gray-700">
                   Nutrition
                 </label>
@@ -613,13 +544,11 @@ const RestaurantMenu = () => {
                 <p className="mt-1 text-xs text-gray-500">
                   Example: {"{"}"calories":450,"protein":"20g"{"}"}
                 </p>
-
               </div>
 
               {/* AVAILABLE */}
 
               <div className="flex items-center gap-3 md:col-span-2">
-
                 <input
                   type="checkbox"
                   name="isAvailable"
@@ -631,13 +560,11 @@ const RestaurantMenu = () => {
                 <label className="font-semibold text-gray-700">
                   Menu Available
                 </label>
-
               </div>
 
               {/* BUTTONS */}
 
               <div className="flex flex-wrap gap-4 md:col-span-2">
-
                 <button
                   type="submit"
                   disabled={saving}
@@ -646,8 +573,8 @@ const RestaurantMenu = () => {
                   {saving
                     ? "Saving..."
                     : editingMenu
-                    ? "Update Menu"
-                    : "Add Menu"}
+                      ? "Update Menu"
+                      : "Add Menu"}
                 </button>
 
                 <button
@@ -658,9 +585,7 @@ const RestaurantMenu = () => {
                 >
                   Cancel
                 </button>
-
               </div>
-
             </form>
           </div>
         )}
@@ -672,9 +597,7 @@ const RestaurantMenu = () => {
         <div className="mt-8">
           <p className="font-semibold text-gray-700">
             Total Menu Items:{" "}
-            <span className="text-green-600">
-              {menus.length}
-            </span>
+            <span className="text-green-600">{menus.length}</span>
           </p>
         </div>
 
@@ -683,20 +606,14 @@ const RestaurantMenu = () => {
         ================================================= */}
 
         {menus.length === 0 ? (
-
           <div className="mt-6 rounded-2xl bg-white p-12 text-center shadow-md">
-
-            <div className="text-6xl">
-              🍽️
-            </div>
+            <div className="text-6xl">🍽️</div>
 
             <h2 className="mt-5 text-2xl font-bold text-gray-800">
               No Menu Items Found
             </h2>
 
-            <p className="mt-2 text-gray-500">
-              Add your first menu item.
-            </p>
+            <p className="mt-2 text-gray-500">Add your first menu item.</p>
 
             <button
               type="button"
@@ -705,53 +622,47 @@ const RestaurantMenu = () => {
             >
               + Add First Menu
             </button>
-
           </div>
-
         ) : (
-
           /* =================================================
              MENU GRID
           ================================================= */
 
           <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-
             {menus.map((menu) => (
-
               <div
                 key={menu._id}
                 className="overflow-hidden rounded-2xl bg-white shadow-md transition hover:-translate-y-1 hover:shadow-xl"
               >
-
                 {/* IMAGE */}
 
                 {menu.image ? (
-
                   <img
-                    src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${menu.image}`}
+                    // src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${menu.image}`}
+                    // src={menu.image}
+                    src={
+                      menu.image?.startsWith("http")
+                        ? menu.image
+                        : `${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${menu.image}`
+                    }
                     alt={menu.name}
                     className="h-52 w-full object-cover"
                     onError={(event) => {
                       event.currentTarget.style.display = "none";
                     }}
                   />
-
                 ) : (
-
                   <div className="flex h-52 items-center justify-center bg-gray-100 text-6xl">
                     🍽️
                   </div>
-
                 )}
 
                 {/* DETAILS */}
 
                 <div className="p-5">
-
                   {/* NAME + STATUS */}
 
                   <div className="flex items-start justify-between gap-3">
-
                     <h2 className="text-xl font-bold text-gray-900">
                       {menu.name}
                     </h2>
@@ -763,17 +674,13 @@ const RestaurantMenu = () => {
                           : "bg-red-100 text-red-600"
                       }`}
                     >
-                      {menu.isAvailable
-                        ? "Available"
-                        : "Unavailable"}
+                      {menu.isAvailable ? "Available" : "Unavailable"}
                     </span>
-
                   </div>
 
                   {/* FOOD TYPE */}
 
                   <div className="mt-3">
-
                     <span
                       className={`rounded-md px-2 py-1 text-xs font-semibold ${
                         String(menu.foodType || "")
@@ -789,14 +696,12 @@ const RestaurantMenu = () => {
                         ? "Non-Veg"
                         : "Veg"}
                     </span>
-
                   </div>
 
                   {/* DESCRIPTION */}
 
                   <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-600">
-                    {menu.description ||
-                      "No description available."}
+                    {menu.description || "No description available."}
                   </p>
 
                   {/* PRICE */}
@@ -828,7 +733,6 @@ const RestaurantMenu = () => {
                   {/* ACTION BUTTONS */}
 
                   <div className="mt-5 grid grid-cols-2 gap-3">
-
                     <button
                       type="button"
                       onClick={() => handleEdit(menu)}
@@ -839,24 +743,17 @@ const RestaurantMenu = () => {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        handleDelete(menu._id)
-                      }
+                      onClick={() => handleDelete(menu._id)}
                       className="rounded-lg bg-red-500 px-4 py-2.5 font-semibold text-white transition hover:bg-red-600"
                     >
                       Delete
                     </button>
-
                   </div>
-
                 </div>
               </div>
-
             ))}
-
           </div>
         )}
-
       </div>
     </div>
   );

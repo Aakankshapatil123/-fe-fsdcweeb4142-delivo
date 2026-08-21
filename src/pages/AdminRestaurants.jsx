@@ -40,13 +40,10 @@ const AdminRestaurants = () => {
     } catch (error) {
       console.log(
         "GET RESTAURANTS ERROR:",
-        error.response?.data?.message || error.message
+        error.response?.data?.message || error.message,
       );
 
-      setError(
-        error.response?.data?.message ||
-          "Failed to load restaurants"
-      );
+      setError(error.response?.data?.message || "Failed to load restaurants");
     } finally {
       setLoading(false);
     }
@@ -106,7 +103,7 @@ const AdminRestaurants = () => {
 
       const response = await updateRestaurant(
         editingRestaurant._id,
-        updateData
+        updateData,
       );
 
       console.log("UPDATE RESTAURANT RESPONSE:", response);
@@ -116,8 +113,8 @@ const AdminRestaurants = () => {
         prev.map((restaurant) =>
           restaurant._id === editingRestaurant._id
             ? response.result
-            : restaurant
-        )
+            : restaurant,
+        ),
       );
 
       // Close edit modal
@@ -127,14 +124,10 @@ const AdminRestaurants = () => {
     } catch (error) {
       console.log(
         "UPDATE RESTAURANT ERROR:",
-        error.response?.data?.message ||
-          error.message
+        error.response?.data?.message || error.message,
       );
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to update restaurant"
-      );
+      alert(error.response?.data?.message || "Failed to update restaurant");
     }
   };
 
@@ -142,7 +135,7 @@ const AdminRestaurants = () => {
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this restaurant?"
+      "Are you sure you want to delete this restaurant?",
     );
 
     if (!confirmDelete) return;
@@ -151,23 +144,17 @@ const AdminRestaurants = () => {
       await deleteRestaurant(id);
 
       setRestaurants((prev) =>
-        prev.filter(
-          (restaurant) => restaurant._id !== id
-        )
+        prev.filter((restaurant) => restaurant._id !== id),
       );
 
       alert("Restaurant deleted successfully");
     } catch (error) {
       console.log(
         "DELETE RESTAURANT ERROR:",
-        error.response?.data?.message ||
-          error.message
+        error.response?.data?.message || error.message,
       );
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to delete restaurant"
-      );
+      alert(error.response?.data?.message || "Failed to delete restaurant");
     }
   };
 
@@ -189,9 +176,7 @@ const AdminRestaurants = () => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <p className="font-semibold text-red-500">
-            {error}
-          </p>
+          <p className="font-semibold text-red-500">{error}</p>
 
           <button
             onClick={fetchRestaurants}
@@ -207,11 +192,9 @@ const AdminRestaurants = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10 md:px-10">
       <div className="mx-auto max-w-7xl">
-
         {/* ================= HEADER ================= */}
 
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
-
           <div>
             <h1 className="text-3xl font-bold text-gray-800">
               Manage Restaurants
@@ -228,18 +211,13 @@ const AdminRestaurants = () => {
           >
             ← Dashboard
           </Link>
-
         </div>
 
         {/* ================= NO RESTAURANTS ================= */}
 
         {restaurants.length === 0 ? (
-
           <div className="rounded-2xl bg-white p-10 text-center shadow-md">
-
-            <div className="text-5xl">
-              🏪
-            </div>
+            <div className="text-5xl">🏪</div>
 
             <h2 className="mt-4 text-xl font-bold text-gray-800">
               No restaurants found
@@ -248,97 +226,76 @@ const AdminRestaurants = () => {
             <p className="mt-2 text-gray-500">
               There are no restaurants available.
             </p>
-
           </div>
-
         ) : (
-
           /* ================= RESTAURANT CARDS ================= */
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-
             {restaurants.map((restaurant) => (
-
               <div
                 key={restaurant._id}
                 className="overflow-hidden rounded-2xl bg-white shadow-md transition hover:shadow-xl"
               >
-
                 {/* ================= IMAGE ================= */}
 
                 {restaurant.image ? (
-
                   <img
-                    src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
+                    // src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
+                    // src={restaurant.image}
+                    src={
+                      restaurant.image?.startsWith("http")
+                        ? restaurant.image
+                        : `${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`
+                    }
                     alt={restaurant.name}
                     className="h-52 w-full object-cover"
                   />
-
                 ) : (
-
                   <div className="flex h-52 items-center justify-center bg-gray-100 text-6xl">
                     🏪
                   </div>
-
                 )}
 
                 {/* ================= DETAILS ================= */}
 
                 <div className="p-5">
-
                   <h2 className="text-xl font-bold text-gray-800">
                     {restaurant.name}
                   </h2>
 
                   <p className="mt-2 text-sm font-semibold text-orange-600">
-                    {restaurant.cuisine ||
-                      "Cuisine not available"}
+                    {restaurant.cuisine || "Cuisine not available"}
                   </p>
 
                   <p className="mt-3 text-sm text-gray-600">
-                    {restaurant.description ||
-                      "No description available"}
+                    {restaurant.description || "No description available"}
                   </p>
 
                   {/* ================= RESTAURANT INFO ================= */}
 
                   <div className="mt-4 space-y-2 text-sm">
-
                     <p>
-                      <span className="font-semibold">
-                        Location:
-                      </span>{" "}
-                      {restaurant.location?.city ||
-                        "N/A"}
+                      <span className="font-semibold">Location:</span>{" "}
+                      {restaurant.location?.city || "N/A"}
                     </p>
 
                     <p>
-                      <span className="font-semibold">
-                        Price:
-                      </span>{" "}
-                      {restaurant.priceRange ||
-                        "₹"}
+                      <span className="font-semibold">Price:</span>{" "}
+                      {restaurant.priceRange || "₹"}
                     </p>
 
                     <p>
-                      <span className="font-semibold">
-                        Rating:
-                      </span>{" "}
-                      ⭐ {restaurant.rating || 0}
+                      <span className="font-semibold">Rating:</span> ⭐{" "}
+                      {restaurant.rating || 0}
                     </p>
 
                     <p>
-                      <span className="font-semibold">
-                        Reviews:
-                      </span>{" "}
+                      <span className="font-semibold">Reviews:</span>{" "}
                       {restaurant.totalReviews || 0}
                     </p>
 
                     <p>
-                      <span className="font-semibold">
-                        Status:
-                      </span>{" "}
-
+                      <span className="font-semibold">Status:</span>{" "}
                       <span
                         className={
                           restaurant.isOpen
@@ -346,25 +303,18 @@ const AdminRestaurants = () => {
                             : "font-semibold text-red-500"
                         }
                       >
-                        {restaurant.isOpen
-                          ? "Open"
-                          : "Closed"}
+                        {restaurant.isOpen ? "Open" : "Closed"}
                       </span>
-
                     </p>
-
                   </div>
 
                   {/* ================= ACTIONS ================= */}
 
                   <div className="mt-5 flex gap-3">
-
                     {/* EDIT */}
 
                     <button
-                      onClick={() =>
-                        handleEditClick(restaurant)
-                      }
+                      onClick={() => handleEditClick(restaurant)}
                       className="flex-1 rounded-lg bg-blue-500 px-4 py-2 font-semibold text-white hover:bg-blue-600"
                     >
                       Edit
@@ -373,28 +323,17 @@ const AdminRestaurants = () => {
                     {/* DELETE */}
 
                     <button
-                      onClick={() =>
-                        handleDelete(
-                          restaurant._id
-                        )
-                      }
+                      onClick={() => handleDelete(restaurant._id)}
                       className="flex-1 rounded-lg bg-red-500 px-4 py-2 font-semibold text-white hover:bg-red-600"
                     >
                       Delete
                     </button>
-
                   </div>
-
                 </div>
-
               </div>
-
             ))}
-
           </div>
-
         )}
-
       </div>
 
       {/* ================================================= */}
@@ -402,15 +341,11 @@ const AdminRestaurants = () => {
       {/* ================================================= */}
 
       {editingRestaurant && (
-
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-
           <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
-
             {/* ================= MODAL HEADER ================= */}
 
             <div className="flex items-center justify-between">
-
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">
                   Edit Restaurant
@@ -422,27 +357,19 @@ const AdminRestaurants = () => {
               </div>
 
               <button
-                onClick={() =>
-                  setEditingRestaurant(null)
-                }
+                onClick={() => setEditingRestaurant(null)}
                 className="text-2xl font-bold text-gray-500 hover:text-red-500"
               >
                 ✕
               </button>
-
             </div>
 
             {/* ================= FORM ================= */}
 
-            <form
-              onSubmit={handleUpdate}
-              className="mt-6 space-y-5"
-            >
-
+            <form onSubmit={handleUpdate} className="mt-6 space-y-5">
               {/* NAME */}
 
               <div>
-
                 <label className="font-semibold text-gray-700">
                   Restaurant Name
                 </label>
@@ -455,13 +382,11 @@ const AdminRestaurants = () => {
                   required
                   className="mt-2 w-full rounded-lg border px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                 />
-
               </div>
 
               {/* DESCRIPTION */}
 
               <div>
-
                 <label className="font-semibold text-gray-700">
                   Description
                 </label>
@@ -473,16 +398,12 @@ const AdminRestaurants = () => {
                   rows="3"
                   className="mt-2 w-full rounded-lg border px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                 />
-
               </div>
 
               {/* CUISINE */}
 
               <div>
-
-                <label className="font-semibold text-gray-700">
-                  Cuisine
-                </label>
+                <label className="font-semibold text-gray-700">Cuisine</label>
 
                 <input
                   type="text"
@@ -492,13 +413,11 @@ const AdminRestaurants = () => {
                   required
                   className="mt-2 w-full rounded-lg border px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                 />
-
               </div>
 
               {/* PRICE RANGE */}
 
               <div>
-
                 <label className="font-semibold text-gray-700">
                   Price Range
                 </label>
@@ -509,38 +428,22 @@ const AdminRestaurants = () => {
                   onChange={handleEditChange}
                   className="mt-2 w-full rounded-lg border px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                 >
+                  <option value="">Select Price Range</option>
 
-                  <option value="">
-                    Select Price Range
-                  </option>
+                  <option value="₹">₹</option>
 
-                  <option value="₹">
-                    ₹
-                  </option>
+                  <option value="₹₹">₹₹</option>
 
-                  <option value="₹₹">
-                    ₹₹
-                  </option>
+                  <option value="₹₹₹">₹₹₹</option>
 
-                  <option value="₹₹₹">
-                    ₹₹₹
-                  </option>
-
-                  <option value="₹₹₹₹">
-                    ₹₹₹₹
-                  </option>
-
+                  <option value="₹₹₹₹">₹₹₹₹</option>
                 </select>
-
               </div>
 
               {/* LOCATION */}
 
               <div>
-
-                <label className="font-semibold text-gray-700">
-                  City
-                </label>
+                <label className="font-semibold text-gray-700">City</label>
 
                 <input
                   type="text"
@@ -549,13 +452,11 @@ const AdminRestaurants = () => {
                   onChange={handleEditChange}
                   className="mt-2 w-full rounded-lg border px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                 />
-
               </div>
 
               {/* OPENING HOURS */}
 
               <div>
-
                 <label className="font-semibold text-gray-700">
                   Opening Hours
                 </label>
@@ -568,18 +469,14 @@ const AdminRestaurants = () => {
                   placeholder="10:00 AM - 10:00 PM"
                   className="mt-2 w-full rounded-lg border px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-200"
                 />
-
               </div>
 
               {/* ================= BUTTONS ================= */}
 
               <div className="flex gap-3 pt-3">
-
                 <button
                   type="button"
-                  onClick={() =>
-                    setEditingRestaurant(null)
-                  }
+                  onClick={() => setEditingRestaurant(null)}
                   className="flex-1 rounded-lg bg-gray-500 px-5 py-3 font-semibold text-white hover:bg-gray-600"
                 >
                   Cancel
@@ -591,17 +488,11 @@ const AdminRestaurants = () => {
                 >
                   Update Restaurant
                 </button>
-
               </div>
-
             </form>
-
           </div>
-
         </div>
-
       )}
-
     </div>
   );
 };

@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 
-import {
-  getRestaurantProfile,
-} from "../services/restaurantOwnerServices";
+import { getRestaurantProfile } from "../services/restaurantOwnerServices";
 
 const RestaurantOwner = () => {
   const navigate = useNavigate();
 
-  const { isAuthenticated, user, loading: authLoading } = useSelector(
-    (state) => state.auth
-  );
+  const {
+    isAuthenticated,
+    user,
+    loading: authLoading,
+  } = useSelector((state) => state.auth);
 
   const [restaurants, setRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,13 +52,10 @@ const RestaurantOwner = () => {
       } catch (error) {
         console.error(
           "GET RESTAURANTS ERROR:",
-          error.response?.data?.message || error.message
+          error.response?.data?.message || error.message,
         );
 
-        setError(
-          error.response?.data?.message ||
-            "Failed to load restaurant."
-        );
+        setError(error.response?.data?.message || "Failed to load restaurant.");
       } finally {
         setLoading(false);
       }
@@ -75,13 +72,11 @@ const RestaurantOwner = () => {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-gray-50">
         <div className="text-center">
-
           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-gray-200 border-t-orange-500"></div>
 
           <p className="mt-4 font-semibold text-gray-600">
             Loading restaurant...
           </p>
-
         </div>
       </div>
     );
@@ -95,10 +90,7 @@ const RestaurantOwner = () => {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-gray-50 px-6">
         <div className="rounded-2xl bg-white p-8 text-center shadow-md">
-
-          <p className="font-semibold text-red-500">
-            {error}
-          </p>
+          <p className="font-semibold text-red-500">{error}</p>
 
           <button
             type="button"
@@ -107,7 +99,6 @@ const RestaurantOwner = () => {
           >
             Try Again
           </button>
-
         </div>
       </div>
     );
@@ -121,7 +112,6 @@ const RestaurantOwner = () => {
     return (
       <div className="flex min-h-[70vh] items-center justify-center bg-gray-50 px-6">
         <div className="text-center">
-
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-orange-100 text-4xl">
             🍽️
           </div>
@@ -133,7 +123,6 @@ const RestaurantOwner = () => {
           <p className="mt-2 text-gray-500">
             You don't have any restaurant yet.
           </p>
-
         </div>
       </div>
     );
@@ -145,23 +134,17 @@ const RestaurantOwner = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 px-6 py-10 md:px-10">
-
       <div className="mx-auto max-w-7xl">
-
         {/* =================================================
             HEADER
         ================================================= */}
 
         <div className="mb-8">
-
           <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">
             My Restaurant
           </h1>
 
-          <p className="mt-2 text-gray-600">
-            Manage your restaurant details
-          </p>
-
+          <p className="mt-2 text-gray-600">Manage your restaurant details</p>
         </div>
 
         {/* =================================================
@@ -169,15 +152,11 @@ const RestaurantOwner = () => {
         ================================================= */}
 
         <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
-
-          <p className="text-sm font-medium text-gray-500">
-            Total Restaurant
-          </p>
+          <p className="text-sm font-medium text-gray-500">Total Restaurant</p>
 
           <p className="mt-1 text-3xl font-bold text-orange-500">
             {restaurants.length}
           </p>
-
         </div>
 
         {/* =================================================
@@ -185,23 +164,25 @@ const RestaurantOwner = () => {
         ================================================= */}
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-
           {restaurants.map((restaurant) => (
-
             <div
               key={restaurant._id}
               className="overflow-hidden rounded-2xl bg-white shadow-md transition hover:shadow-lg"
             >
-
               {/* =================================================
                   IMAGE
               ================================================= */}
 
               <div className="h-52 w-full bg-gray-200">
-
                 {restaurant.image ? (
                   <img
-                    src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
+                    // src={`${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`}
+                    // src={restaurant.image}
+                    src={
+                      restaurant.image?.startsWith("http")
+                        ? restaurant.image
+                        : `${import.meta.env.VITE_API_URL.replace("/api/v1", "")}${restaurant.image}`
+                    }
                     alt={restaurant.name || "Restaurant"}
                     className="h-full w-full object-cover"
                   />
@@ -210,7 +191,6 @@ const RestaurantOwner = () => {
                     No Restaurant Image
                   </div>
                 )}
-
               </div>
 
               {/* =================================================
@@ -218,22 +198,17 @@ const RestaurantOwner = () => {
               ================================================= */}
 
               <div className="p-6">
-
                 {/* NAME + STATUS */}
 
                 <div className="flex items-start justify-between gap-3">
-
                   <div className="min-w-0">
-
                     <h2 className="truncate text-2xl font-bold text-gray-900">
                       {restaurant.name}
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-500">
-                      {restaurant.cuisine ||
-                        "Cuisine not available"}
+                      {restaurant.cuisine || "Cuisine not available"}
                     </p>
-
                   </div>
 
                   <span
@@ -243,11 +218,8 @@ const RestaurantOwner = () => {
                         : "bg-red-100 text-red-600"
                     }`}
                   >
-                    {restaurant.isOpen
-                      ? "Open"
-                      : "Closed"}
+                    {restaurant.isOpen ? "Open" : "Closed"}
                   </span>
-
                 </div>
 
                 {/* =================================================
@@ -255,8 +227,7 @@ const RestaurantOwner = () => {
                 ================================================= */}
 
                 <p className="mt-4 line-clamp-3 text-sm leading-6 text-gray-600">
-                  {restaurant.description ||
-                    "No description available."}
+                  {restaurant.description || "No description available."}
                 </p>
 
                 {/* =================================================
@@ -264,20 +235,15 @@ const RestaurantOwner = () => {
                 ================================================= */}
 
                 <div className="mt-5 rounded-xl bg-gray-50 p-4">
-
-                  <p className="text-xs text-gray-500">
-                    Location
-                  </p>
+                  <p className="text-xs text-gray-500">Location</p>
 
                   <p className="mt-1 text-sm font-semibold text-gray-800">
-                    {restaurant.location?.address ||
-                      "N/A"}
+                    {restaurant.location?.address || "N/A"}
 
                     {restaurant.location?.city
                       ? `, ${restaurant.location.city}`
                       : ""}
                   </p>
-
                 </div>
 
                 {/* =================================================
@@ -285,35 +251,25 @@ const RestaurantOwner = () => {
                 ================================================= */}
 
                 <div className="mt-4 grid grid-cols-2 gap-3">
-
                   {/* PRICE */}
 
                   <div className="rounded-xl bg-gray-50 p-4">
-
-                    <p className="text-xs text-gray-500">
-                      Price Range
-                    </p>
+                    <p className="text-xs text-gray-500">Price Range</p>
 
                     <p className="mt-1 font-semibold text-gray-800">
                       {restaurant.priceRange || "₹"}
                     </p>
-
                   </div>
 
                   {/* RATING */}
 
                   <div className="rounded-xl bg-gray-50 p-4">
-
-                    <p className="text-xs text-gray-500">
-                      Rating
-                    </p>
+                    <p className="text-xs text-gray-500">Rating</p>
 
                     <p className="mt-1 font-semibold text-gray-800">
                       ★ {restaurant.rating ?? 0}
                     </p>
-
                   </div>
-
                 </div>
 
                 {/* =================================================
@@ -321,15 +277,11 @@ const RestaurantOwner = () => {
                 ================================================= */}
 
                 <div className="mt-4 rounded-xl bg-gray-50 p-4">
-
-                  <p className="text-xs text-gray-500">
-                    Opening Hours
-                  </p>
+                  <p className="text-xs text-gray-500">Opening Hours</p>
 
                   <p className="mt-1 text-sm font-semibold text-gray-800">
                     {restaurant.openingHours || "N/A"}
                   </p>
-
                 </div>
 
                 {/* =================================================
@@ -339,25 +291,17 @@ const RestaurantOwner = () => {
                 <button
                   type="button"
                   onClick={() =>
-                    navigate(
-                      `/restaurant/owner/edit/${restaurant._id}`
-                    )
+                    navigate(`/restaurant/owner/edit/${restaurant._id}`)
                   }
                   className="mt-6 w-full rounded-xl bg-orange-500 px-4 py-3 font-semibold text-white transition hover:bg-orange-600"
                 >
                   ✏️ Edit Restaurant
                 </button>
-
               </div>
-
             </div>
-
           ))}
-
         </div>
-
       </div>
-
     </div>
   );
 };
